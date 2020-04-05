@@ -1,0 +1,27 @@
+BC1.1
+phi_Gamma := 
+(
+(longitude_N161 & latitude_P83 & population_P869 & median_income_P108 & median_house_price_P151) | 
+(longitude_N93 & latitude_P110 & population_P325 & median_income_N120 & median_house_price_N89) | 
+(longitude_N47 & latitude_P119 & population_P1985 & median_income_P538 & median_house_price_P378)
+)
+ & 
+((longitude_N161 => !longitude_N93 & !longitude_N47)& 
+(longitude_N93 => !longitude_N161 & !longitude_N47)& 
+(longitude_N47 => !longitude_N161 & !longitude_N93))& 
+((latitude_P83 => !latitude_P110 & !latitude_P119)& 
+(latitude_P110 => !latitude_P83 & !latitude_P119)& 
+(latitude_P119 => !latitude_P83 & !latitude_P110))& 
+((population_P869 => !population_P325 & !population_P1985)& 
+(population_P325 => !population_P869 & !population_P1985)& 
+(population_P1985 => !population_P869 & !population_P325))& 
+((median_income_P108 => !median_income_N120 & !median_income_P538)& 
+(median_income_N120 => !median_income_P108 & !median_income_P538)& 
+(median_income_P538 => !median_income_P108 & !median_income_N120))& 
+((median_house_price_P151 => !median_house_price_N89 & !median_house_price_P378)& 
+(median_house_price_N89 => !median_house_price_P151 & !median_house_price_P378)& 
+(median_house_price_P378 => !median_house_price_P151 & !median_house_price_N89))
+;
+phi_T :=;
+FORMULA := phi_Gamma & phi_T;
+ASSIGN FORMULA;
