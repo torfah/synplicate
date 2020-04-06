@@ -18,12 +18,12 @@ def config(path):
             for feature in word_list[2:]:
                 name = feature.split(':')[0] 
                 num_of_partitions = feature.split(':')[1].split(',')[0] 
-                feature_partition[name] = num_of_partitions
+                feature_partition[name] = int(num_of_partitions)
         elif word_list[0]=="labels":
             for label in word_list[2:]:
                 name = label.split(':')[0] 
                 num_of_partitions = label.split(':')[1].split(',')[0] 
-                label_partition[name] = num_of_partitions
+                label_partition[name] = int(num_of_partitions)
         elif word_list[0]=="extend":
             if word_list[2] == "True":
                 extend = True

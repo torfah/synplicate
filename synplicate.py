@@ -6,7 +6,7 @@ from synthesizer.max_sharp_sat import mmc_synthesizer
 
 # Read arguments
 threshold = True
-num_of_samples = 3
+num_of_samples = 6
 synthesis_config_path = "examples/california_census_simplified/config.mmc"
 model_path = "examples/california_census_simplified/model"
 output_path = "examples/california_census_simplified/mmc_encoding/"

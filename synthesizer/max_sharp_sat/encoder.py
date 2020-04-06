@@ -58,8 +58,7 @@ def phi_Gamma(sat_file,samples):
                     if j<num_of_samples-2 or (j==num_of_samples-2 and i!=num_of_samples-1): 
                         sat_file.write(" & ")
             if i<num_of_samples-1:
-                sat_file.write(")& ")
-                sat_file.write("\n")
+                sat_file.write(") & ")
             else:
                 sat_file.write(")")
         sat_file.write(")")
@@ -70,7 +69,102 @@ def phi_Gamma(sat_file,samples):
     sat_file.write(";\n")
 
 def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
-    sat_file.write("phi_T :=")
+    num_of_features = len(feature_partition)
+    sat_file.write("phi_T :=\n")
+    # assign feature nodes to unique features
+    for i in range(num_of_feature_nodes):
+        sat_file.write("(")
+        for h, f in enumerate(list(feature_partition.keys())):
+            sat_file.write("(")
+            sat_file.write(f"lam_{i:d}_{f}")
+            for ff in list(feature_partition.keys()):
+                if ff!=f:
+                    sat_file.write(" & ")
+                    sat_file.write(f"!lam_{i:d}_{ff}")
+            sat_file.write(")")
+            if h<num_of_features-1:
+                sat_file.write(" | ")
+        sat_file.write(")")
+        if i<num_of_feature_nodes-1:
+            sat_file.write(" & ")
+        sat_file.write("\n")
+
+    # uniquness per feature and determinism of transition relation 
+    # uniquness feature nodes
+    sat_file.write(" & \n")
+    if (num_of_feature_nodes>1):
+        for i in range(num_of_feature_nodes):
+            for fid, f in enumerate(feature_partition.keys()):
+                sat_file.write("(")
+                sat_file.write(f"lam_{i:d}_{f} => ")
+                for j in range(num_of_feature_nodes):
+                    ffid = 0
+                    for  ff, ffbu in feature_partition.items():
+                        if j!=i and ff!=f:
+                            for s in range(ffbu):
+                                sat_file.write(f"   !tau_{i:d}_{ff}_{s:d}_{j:d}")
+                                if not ((ffid==num_of_features-1 or (ffid==num_of_features-2 and fid==num_of_features-1)) and (j==num_of_feature_nodes-1 or (j==num_of_feature_nodes-2 and i==num_of_feature_nodes-1)) and s==ffbu-1):
+                                    sat_file.write(" & ")
+                        ffid += 1
+                sat_file.write(")")
+                if not(i==num_of_feature_nodes-1 and fid==num_of_features-1):
+                    sat_file.write(" & ")
+                sat_file.write("\n")
+        sat_file.write(" & \n")
+    # uniquness label nodes
+    
+    for i in range(num_of_feature_nodes):
+        for fid, f in enumerate(feature_partition.keys()):
+            sat_file.write("(")
+            sat_file.write(f"lam_{i:d}_{f} => ")
+            lid = 0
+            for l, lbu in label_partition.items():
+                for h in range(lbu):
+                    ffid = 0
+                    for  ff, ffbu in feature_partition.items():
+                        if ff!=f:
+                            for s in range(ffbu):
+                                sat_file.write(f"   !tau_{i:d}_{ff}_{s:d}_{l}_{h}")
+                                if not ((ffid==num_of_features-1 or (ffid==num_of_features-2 and fid==num_of_features-1)) and (lid==len(label_partition)-1 and h==lbu-1) and s==ffbu-1):
+                                    sat_file.write(" & ")
+                        ffid += 1
+                lid += 1
+            sat_file.write(")")
+            if not(i==num_of_feature_nodes-1 and fid==num_of_features-1):
+                sat_file.write(" & ")
+            sat_file.write("\n")
+    # determinism
+    num_of_label_nodes = 0
+    lable_node_id = {}
+    for l, lbu in label_partition.items():
+        for j in range(lbu):
+            lable_node_id[num_of_label_nodes+j]= (l,j)
+        num_of_label_nodes += lbu
+
+    sat_file.write("& \n")
+    if num_of_feature_nodes>1:
+        for i in range(num_of_feature_nodes):
+            fid = 0 
+            for f,fbu in feature_partition.items():
+                for b in range(fbu):
+                    sat_file.write("(")
+                    for j in range(num_of_feature_nodes+num_of_label_nodes):
+                        if j < num_of_feature_nodes:
+                            if j!=i:
+                                sat_file.write("(")
+                                sat_file.write(f"tau_{i:d}_{f}_{b:d}_{j:d}")
+                                sat_file.write(")")
+                                sat_file.write(" | ")
+                        else:
+                            sat_file.write("(")
+                            sat_file.write(f"tau_{i:d}_{f}_{b:d}_{lable_node_id[j-num_of_feature_nodes][0]}_{lable_node_id[j-num_of_feature_nodes][1]}")
+                            sat_file.write(")")
+                            if not (j==num_of_feature_nodes+num_of_label_nodes-1):
+                                    sat_file.write(" | ")
+                    sat_file.write(")")
+                    if not (i==num_of_feature_nodes-1 and fid==num_of_features-1 and b==fbu-1):
+                        sat_file.write("&\n")
+                fid += 1    
 
     sat_file.write(";\n")
 
@@ -98,7 +192,9 @@ def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_part
     # create dimac file with mmc parameters 
     dimacs_tempfile_path = output_path+"encoding_temp.dimacs"
 
+    print("Translation to dimacs...")
     os.system(f"./synthesizer/max_sharp_sat/bc2cnf -all {sat_file_path} {dimacs_tempfile_path}")
 
+    print("Translation to maxdimacs...")
     dimacs_file_path = output_path+"encoding.dimacs"
     return dimacs_file_path
