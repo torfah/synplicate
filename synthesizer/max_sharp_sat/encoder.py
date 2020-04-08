@@ -143,8 +143,9 @@ def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
             lable_node_id[num_of_label_nodes+j]= (l,j)
         num_of_label_nodes += lbu
 
-    sat_file.write("& \n")
+    
     if num_of_feature_nodes>1:
+        sat_file.write("& \n")
         for i in range(num_of_feature_nodes):
             fid = 0 
             for f,fbu in feature_partition.items():
@@ -188,6 +189,8 @@ def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
     sat_file.write(";\n")
 
 def phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samples,feature_defs):
+
+    # path encoding
     sat_file.write("phi_sim := pi_0_0 &\n")
     sat_file.write("T ")
     for p in range(num_of_feature_nodes):
@@ -220,13 +223,33 @@ def phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samp
                             sat_file.write(")")
                             sat_file.write("\n")
                     for l, lbu in label_partition.items():
-                        for b in range(lbu):
+                        for lb in range(lbu):
                             sat_file.write("   | ")
                             sat_file.write("(")
-                            
+                            sat_file.write(f"del_{p:d}_{i:d}_{f}_{b:d}_{l}_{lb:d} & ")
+                            sat_file.write(f"pi_{p:d}_{i:d} & pi_{p+1:d}_{l}_{lb:d} & ")
+                            sat_file.write(f"tau_{i:d}_{f}_{b:d}_{l}_{lb:d} & ")
+                            sat_file.write("(")
+                            sat_file.write("F")
+                            for inputs in samples.keys():
+                                feature_def = feature_defs[f]
+                                if feature_def(inputs) == b:
+                                    sat_file.write(" | ")
+                                    sat_file.write("(")
+                                    sat_file.write("T ")
+                                    for name, val in inputs:
+                                        sat_file.write(" & ")
+                                        sat_file.write(f"{name}_{create_feature_string(val)}")
+                                    sat_file.write(")")
+                            sat_file.write(")")
                             sat_file.write(")")
                             sat_file.write("\n")
         sat_file.write(")")
+
+        # sat_file.write(" & \n")
+
+        # label condition
+
 
     sat_file.write(";\n")
 
