@@ -7,7 +7,8 @@ from synthesizer.max_sharp_sat import mmc_synthesizer
 # Read arguments
 threshold = True
 num_of_samples = 6
-synthesis_config_path = "examples/california_census_simplified/config.mmc"
+# synthesis_config_path = "examples/california_census_simplified/config.mmc"
+synthesis_benchmark_path = "examples/california_census_simplified/"
 model_path = "examples/california_census_simplified/model"
 output_path = "examples/california_census_simplified/mmc_encoding/"
 model = tf.keras.models.load_model(model_path) # load model 
@@ -27,7 +28,7 @@ while threshold:
 
     # Synthesizer
     print("Extracting synthesis configuration... ") 
-    config = mmc_synthesizer.config(synthesis_config_path) 
+    config = mmc_synthesizer.config(synthesis_benchmark_path) 
     print(f"Synthesizing program with {config[0]:d} states, features {config[1]}, and labels {config[2]} ...")
     program_path = mmc_synthesizer.synthesize(output_path,samples,config)
 

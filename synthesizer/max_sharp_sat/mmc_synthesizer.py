@@ -1,14 +1,17 @@
 
+import importlib
 from synthesizer.max_sharp_sat import encoder
 
 
+
 def config(path):
-    config_file = open(path,"r")
+    config_file = open(f"{path}config.mmc","r")
     # initialize 
     size = 0
     feature_partition = {}
     label_partition = {}
     extend = False
+    feature_defs = {}
     # parse config file
     for line in config_file:
         word_list = line.split()
@@ -27,23 +30,26 @@ def config(path):
         elif word_list[0]=="extend":
             if word_list[2] == "True":
                 extend = True
+        elif word_list[0]=="feature_defs":
+            module = importlib.import_module(f".{word_list[2]}",path.replace("/",".").rstrip('.'))
+            feature_defs = module.retrieve_feature_defs()
         else:
             raise Exception("Config file syntax error!")
         # print(word_list[0])
 
-    return (size,feature_partition,label_partition,extend)
+    return (size,feature_partition,label_partition,feature_defs,extend)
 
 
 def synthesize(output_path,samples,config):
 
     num_of_feature_nodes = config[0]
     feature_partition = config[1]
-    label_partition = config[2]
-
+    label_partition = config[2] 
+    feature_defs = config[3]
     
 
     # create max#sat encoding
-    encoding_path = encoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition)
+    encoding_path = encoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs)
 
     # maximum model counting 
 

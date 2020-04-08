@@ -77,7 +77,7 @@ def sample(model,num_of_samples):
         #     label = True 
         # else:
         #     label = False
-        samples[(feature1_name,feature1_value_norm),(feature2_name,feature2_value_norm),(feature3_name,feature3_value_norm),(feature4_name,feature4_value_norm)] = [("median_house_price",prediction)]
+        samples[(feature1_name,feature1_value),(feature2_name,feature2_value),(feature3_name,feature3_value),(feature4_name,feature4_value)] = [("median_house_price",prediction)]
     
     return samples
 

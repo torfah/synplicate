@@ -51,12 +51,14 @@ def phi_Gamma(sat_file,samples):
             sat_file.write("(")
             sat_file.write(feature_var_id[(f,i)])
             sat_file.write(" => ")
+            flag = False
             for j in range(num_of_samples):
                 if (feature_var_id[(f,j)]!=feature_var_id[(f,i)]):
+                    if flag: 
+                        sat_file.write(" & ")
+                    flag = True
                     sat_file.write("!")
                     sat_file.write(feature_var_id[(f,j)])
-                    if j<num_of_samples-2 or (j==num_of_samples-2 and i!=num_of_samples-1): 
-                        sat_file.write(" & ")
             if i<num_of_samples-1:
                 sat_file.write(") & ")
             else:
@@ -152,12 +154,29 @@ def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
                         if j < num_of_feature_nodes:
                             if j!=i:
                                 sat_file.write("(")
-                                sat_file.write(f"tau_{i:d}_{f}_{b:d}_{j:d}")
+                                sat_file.write(f"tau_{i:d}_{f}_{b:d}_{j:d} & ")
+                                for jj in range(num_of_feature_nodes+num_of_label_nodes):
+                                    if j!=jj and jj!=i:
+                                        if jj<num_of_feature_nodes:
+                                            sat_file.write(f"!tau_{i:d}_{f}_{b:d}_{jj:d}")
+                                        else:
+                                            sat_file.write(f"!tau_{i:d}_{f}_{b:d}_{lable_node_id[jj-num_of_feature_nodes][0]}_{lable_node_id[jj-num_of_feature_nodes][1]}")
+                                        if not(jj==num_of_feature_nodes+num_of_label_nodes-1 or (jj==num_of_feature_nodes+num_of_label_nodes-2 and j==num_of_feature_nodes+num_of_label_nodes-1)):
+                                            sat_file.write(" & ")
                                 sat_file.write(")")
                                 sat_file.write(" | ")
                         else:
                             sat_file.write("(")
-                            sat_file.write(f"tau_{i:d}_{f}_{b:d}_{lable_node_id[j-num_of_feature_nodes][0]}_{lable_node_id[j-num_of_feature_nodes][1]}")
+                            sat_file.write(f"tau_{i:d}_{f}_{b:d}_{lable_node_id[j-num_of_feature_nodes][0]}_{lable_node_id[j-num_of_feature_nodes][1]} ")
+                            for jj in range(num_of_feature_nodes+num_of_label_nodes):
+                                if jj<num_of_feature_nodes:
+                                    if jj!=j and jj!=i:
+                                        sat_file.write(" & ")
+                                        sat_file.write(f"!tau_{i:d}_{f}_{b:d}_{jj:d} ")                                            
+                                else:
+                                    if (lable_node_id[j-num_of_feature_nodes][0]==lable_node_id[jj-num_of_feature_nodes][0] and jj!=j):
+                                        sat_file.write(" & ")     
+                                        sat_file.write(f"!tau_{i:d}_{f}_{b:d}_{lable_node_id[jj-num_of_feature_nodes][0]}_{lable_node_id[jj-num_of_feature_nodes][1]}")                                               
                             sat_file.write(")")
                             if not (j==num_of_feature_nodes+num_of_label_nodes-1):
                                     sat_file.write(" | ")
@@ -168,7 +187,50 @@ def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
 
     sat_file.write(";\n")
 
-def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition):
+def phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samples,feature_defs):
+    sat_file.write("phi_sim := pi_0_0 &\n")
+    sat_file.write("T ")
+    for p in range(num_of_feature_nodes):
+        sat_file.write("\n &")
+        sat_file.write("(")
+        sat_file.write(" F \n")
+        for i in range(num_of_feature_nodes):
+            for f, fbu in feature_partition.items():
+                for b in range(fbu):
+                    for j in range(num_of_feature_nodes):
+                        if(j!=i):
+                            sat_file.write("   | ")
+                            sat_file.write("(")
+                            sat_file.write(f"del_{p:d}_{i:d}_{f}_{b:d}_{j:d} & ")
+                            sat_file.write(f"pi_{p:d}_{i:d} & pi_{p+1:d}_{j:d} & ")
+                            sat_file.write(f"tau_{i:d}_{f}_{b:d}_{j:d} & ")
+                            sat_file.write("(")
+                            sat_file.write("F")
+                            for inputs in samples.keys():
+                                feature_def = feature_defs[f]
+                                if feature_def(inputs) == b:
+                                    sat_file.write(" | ")
+                                    sat_file.write("(")
+                                    sat_file.write("T ")
+                                    for name, val in inputs:
+                                        sat_file.write(" & ")
+                                        sat_file.write(f"{name}_{create_feature_string(val)}")
+                                    sat_file.write(")")
+                            sat_file.write(")")
+                            sat_file.write(")")
+                            sat_file.write("\n")
+                    for l, lbu in label_partition.items():
+                        for b in range(lbu):
+                            sat_file.write("   | ")
+                            sat_file.write("(")
+                            
+                            sat_file.write(")")
+                            sat_file.write("\n")
+        sat_file.write(")")
+
+    sat_file.write(";\n")
+
+def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs):
 
     # create max#sat file
     os.system(f"mkdir -p {output_path}")
@@ -183,9 +245,11 @@ def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_part
     phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition)
 
     # phi_sim 
+    # compute mapping between (feature,bucket) -> sample
+    phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samples,feature_defs)
 
 
-    sat_file.write("FORMULA := phi_Gamma & phi_T;\n")
+    sat_file.write("FORMULA := phi_Gamma & phi_T & phi_sim;\n")
     sat_file.write("ASSIGN FORMULA;")
     sat_file.close()
 

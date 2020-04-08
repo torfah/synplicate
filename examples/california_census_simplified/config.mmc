@@ -1,4 +1,5 @@
 size = 3
 features = population:4, median_income:2, location:3
-labels = median_house_price:5
+labels = median_house_price:5, test:2
 extend = False
+feature_defs = feature_defs
