@@ -1,12 +1,12 @@
 
 import tensorflow as tf
-from sampler import sampler
 from synthesizer.max_sharp_sat import mmc_synthesizer
+import importlib
 
 
 # Read arguments
 threshold = True
-num_of_samples = 10
+num_of_samples = 15
 # synthesis_config_path = "examples/california_census_simplified/config.mmc"
 synthesis_benchmark_path = "examples/california_census_simplified/"
 model_path = "examples/california_census_simplified/model"
@@ -17,6 +17,8 @@ model = tf.keras.models.load_model(model_path) # load model
 # main loop 
 while threshold:
     # Sampler:
+    # import sampler
+    sampler = importlib.import_module(f".sampler",synthesis_benchmark_path.replace("/",".").rstrip('.'))
     # Input: model: model of a deep neural network.
     #        num_of_samples: sampling rate
     # Output: samples: Map {tuple of ordered inputs -> tuple of ordered lables}

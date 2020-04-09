@@ -246,11 +246,34 @@ def phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samp
                             sat_file.write("\n")
         sat_file.write(")")
 
-        # sat_file.write(" & \n")
+        sat_file.write(" & \n")
 
         # label condition
-
-
+        sat_file.write("(")
+        sat_file.write("F")
+        for p in range(num_of_feature_nodes+1):
+            for l, lbu in label_partition.items():
+                for b in range(lbu):
+                    sat_file.write("\n")
+                    sat_file.write(" | ")
+                    sat_file.write("(")
+                    sat_file.write(f"pi_{p:d}_{l}_{b:d} & ")
+                    sat_file.write("(")
+                    sat_file.write("F")
+                    for outputs in samples.values():
+                        label_def = feature_defs[l]
+                        if label_def(outputs) == b:
+                            sat_file.write(" | ")
+                            sat_file.write("(")
+                            sat_file.write("T ")
+                            for name, val in outputs:
+                                if name == l:
+                                    sat_file.write(" & ")
+                                    sat_file.write(f"{name}_{create_feature_string(val)}")
+                            sat_file.write(")")
+                    sat_file.write(")")
+                    sat_file.write(")")
+        sat_file.write(")")
     sat_file.write(";\n")
 
 def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs):
