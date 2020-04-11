@@ -1,6 +1,8 @@
 
 import importlib
+import os
 from synthesizer.max_sharp_sat import encoder
+
 
 
 
@@ -52,6 +54,8 @@ def synthesize(output_path,samples,config):
     encoding_path = encoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs)
 
     # maximum model counting 
+    print("Maximum model counting...")
+    os.system(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 3")
 
     # translate witness to program 
     program_path = ""

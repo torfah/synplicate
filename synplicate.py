@@ -6,7 +6,7 @@ import importlib
 
 # Read arguments
 threshold = True
-num_of_samples = 15
+num_of_samples = 5
 # synthesis_config_path = "examples/california_census_simplified/config.mmc"
 synthesis_benchmark_path = "examples/california_census_simplified/"
 model_path = "examples/california_census_simplified/model"
