@@ -9,7 +9,7 @@ def check_num_of_inputs(inputs):
 def population(inputs):
     assert(check_num_of_inputs(inputs))
     value = inputs[2][1]
-    if value<3000.:
+    if value<3000.0:
         return 1
     if value<10000.0:
         return 2
@@ -56,9 +56,9 @@ def test(outputs):
 def retrieve_feature_defs():
     feature_defs = {}
     feature_defs["population"] = population
-    feature_defs["median_income"] = median_income
+    feature_defs["medianIncome"] = median_income
     feature_defs["location"] = location
-    feature_defs["median_house_price"] = median_house_price
+    feature_defs["medianHousePrice"] = median_house_price
     feature_defs["test"] = test
 
     return feature_defs

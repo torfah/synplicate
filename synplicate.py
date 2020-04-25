@@ -6,11 +6,10 @@ import importlib
 
 # Read arguments
 threshold = True
-num_of_samples = 5
+num_of_samples = 3
 # synthesis_config_path = "examples/california_census_simplified/config.mmc"
 synthesis_benchmark_path = "examples/california_census_simplified/"
 model_path = "examples/california_census_simplified/model"
-output_path = "examples/california_census_simplified/mmc_encoding/"
 model = tf.keras.models.load_model(model_path) # load model 
 
 
@@ -29,10 +28,7 @@ while threshold:
     # TODO
 
     # Synthesizer
-    print("Extracting synthesis configuration... ") 
-    config = mmc_synthesizer.config(synthesis_benchmark_path) 
-    print(f"Synthesizing program with {config[0]:d} states, features {config[1]}, and labels {config[2]} ...")
-    program_path = mmc_synthesizer.synthesize(output_path,samples,config)
+    program_path = mmc_synthesizer.synthesize(synthesis_benchmark_path,samples)
 
     # Evaluator
 

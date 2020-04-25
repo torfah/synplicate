@@ -353,6 +353,7 @@ def extract_max_variables(dimacs):
         
         if current_num!="":
             vars.append(current_num)
+    print(f"   {len(vars)} max variables")
     text_file.close()    
     return vars
 
@@ -386,7 +387,7 @@ def extract_ind_variables(dimacs,name_list):
         
         if current_num!="":
             vars.append(current_num)
-    # print(vars)
+    print(f"   {len(vars)} ind variables")
     text_file.close()
     return vars
 
