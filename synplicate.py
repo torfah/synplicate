@@ -6,7 +6,7 @@ import importlib
 
 # Read arguments
 threshold = True
-num_of_samples = 3
+num_of_samples = 4
 # synthesis_config_path = "examples/california_census_simplified/config.mmc"
 synthesis_benchmark_path = "examples/california_census_simplified/"
 model_path = "examples/california_census_simplified/model"
@@ -28,7 +28,8 @@ while threshold:
     # TODO
 
     # Synthesizer
-    program_path = mmc_synthesizer.synthesize(synthesis_benchmark_path,samples)
+    program_path, dot_path = mmc_synthesizer.synthesize(synthesis_benchmark_path,samples)
+    print(f"Synthesized program: {program_path}\nVisualization: {dot_path}")
 
     # Evaluator
 

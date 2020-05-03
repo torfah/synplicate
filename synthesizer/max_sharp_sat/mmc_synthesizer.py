@@ -41,16 +41,9 @@ def configure(path):
 
     return (size,feature_partition,label_partition,feature_defs,extend)
 
-def extract_program(encoding_path,witness_path,target_path):
+def extract_program_map(encoding_path,witness_path):
 
-    
-    os.system(f"mkdir -p {target_path}program")
     witness_file = open(witness_path,"r")
-    dot_file_path = target_path+"program/program.dot"
-    dot_file = open(dot_file_path,"w")
-    python_file_path = target_path+"program/program.py"
-    python_file = open(python_file_path,"w") 
-
     var_ids = []
     count = 0
     for line in witness_file.readlines():
@@ -93,8 +86,18 @@ def extract_program(encoding_path,witness_path,target_path):
             if id in var_ids:
                 # extract origin state, partition, successor state 
                 attributes = name.split('_')
-                program_edges[(attributes[1],attributes[3])] = attributes[4]
-                print(f"({attributes[1]},{attributes[3]}) -> {attributes[4]}")
+                source  = attributes[1]
+                partition = attributes[3]
+                index = 3
+                while (not partition.isdigit()):
+                    index += 1
+                    partition = attributes[index]
+                index += 1
+                dest = attributes[index]
+                for att in attributes[index+1:]:
+                    dest += "_"+ att
+                program_edges[(source,partition)] = dest
+                print(f"({source},{partition}) -> {dest}")
         if line.startswith("c lam"):
             words = line.split()
             # retrieve var name 
@@ -104,17 +107,59 @@ def extract_program(encoding_path,witness_path,target_path):
             if id in var_ids:
                 # extract  state, feature
                 attributes = name.split('_')
-                program_nodes[attributes[1]] = attributes[2]
-                print(f"{attributes[1]}: {attributes[2]}")
-
+                node = attributes[1]
+                feature = attributes[2]
+                for att in attributes[3:]:
+                    feature += "_"+att
+                program_nodes[node] = feature
+                print(f"{node}: {feature}")
     
-    # print(program_edges)
-    # print(program_nodes)
+    witness_file.close()
+    return program_edges,program_nodes
+
+def synthesize_dot_code(target_path,program_egdes,program_nodes):
+    dot_file_path = target_path+"program/program.dot"
+    dot_file = open(dot_file_path,"w")
+
+    dot_file.write("digraph {\n")
+    for value in program_egdes.values():
+        if not value.isdigit():
+            dot_file.write(f"node [label={value},shape=\"diamond\",style=\"\"] {value}\n")
+    
+    for node, feature in program_nodes.items():
+        dot_file.write(f"node [label={feature},shape=\"diamond\",style=\"\"] {node}\n")
+
+    dot_file.write("\n")
+
+    for (source, partition) , dest in program_egdes.items():
+        dot_file.write(f"{source} -> {dest} [label=\"{partition}\"]\n")
+
+    dot_file.write("}")
 
     dot_file.close()
+
+    png_path = target_path + "program/program.png"
+
+    os.system(f"dot -Tpng {dot_file_path} -o {png_path}")
+    return dot_file_path, png_path
+
+def synthesize_python_code(target_path,program_edges,program_nodes):
+    python_file_path = target_path+"program/program.py"
+    python_file = open(python_file_path,"w") 
+
     python_file.close()
-    witness_file.close()
+
     return python_file_path
+
+def extract_program(encoding_path,witness_path,target_path):
+
+    os.system(f"mkdir -p {target_path}program")
+    program_edges, program_nodes = extract_program_map(encoding_path,witness_path)
+
+    dot_file_path, png_path = synthesize_dot_code(target_path, program_edges, program_nodes)
+    python_file_path = synthesize_python_code(target_path,program_edges,program_nodes)
+
+    return python_file_path,dot_file_path,png_path
 
 def synthesize(benchmark_path,samples):
     
@@ -142,6 +187,7 @@ def synthesize(benchmark_path,samples):
     os.system(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
 
     # translate witness to program: extract program from mmc witness
-    program_path = extract_program(encoding_path,witness_path,benchmark_path)
+    program_path, dot_path, png_path = extract_program(encoding_path,witness_path,benchmark_path)
+    os.system(f"open {png_path}")
 
-    return program_path
+    return program_path, dot_path
