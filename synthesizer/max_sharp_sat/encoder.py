@@ -102,15 +102,15 @@ def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
         for i in range(num_of_feature_nodes):
             for fid, f in enumerate(feature_partition.keys()):
                 sat_file.write("(")
-                sat_file.write(f"lam_{i:d}_{f} => ")
-                for j in range(num_of_feature_nodes):
+                sat_file.write(f"lam_{i:d}_{f} => T ")
+                for j in range(i+1,num_of_feature_nodes):
                     ffid = 0
                     for  ff, ffbu in feature_partition.items():
                         if j!=i and ff!=f:
                             for s in range(ffbu):
-                                sat_file.write(f"   !tau_{i:d}_{ff}_{s:d}_{j:d}")
-                                if not ((ffid==num_of_features-1 or (ffid==num_of_features-2 and fid==num_of_features-1)) and (j==num_of_feature_nodes-1 or (j==num_of_feature_nodes-2 and i==num_of_feature_nodes-1)) and s==ffbu-1):
-                                    sat_file.write(" & ")
+                                sat_file.write(f"  & !tau_{i:d}_{ff}_{s:d}_{j:d}")
+                                # if not ((ffid==num_of_features-1 or (ffid==num_of_features-2 and fid==num_of_features-1)) and (j==num_of_feature_nodes-1 or (j==num_of_feature_nodes-2 and i==num_of_feature_nodes-1)) and s==ffbu-1):
+                                #     sat_file.write(" & ")
                         ffid += 1
                 sat_file.write(")")
                 if not(i==num_of_feature_nodes-1 and fid==num_of_features-1):
@@ -158,12 +158,12 @@ def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
         for f,fbu in feature_partition.items():
             for b in range(fbu):
                 sat_file.write("(")
-                for j in range(num_of_feature_nodes+num_of_label_nodes):
+                for j in range(i+1,num_of_feature_nodes+num_of_label_nodes):
                     if j < num_of_feature_nodes:
                         if j!=i:
                             sat_file.write("(")
                             sat_file.write(f"tau_{i:d}_{f}_{b:d}_{j:d} & ")
-                            for jj in range(num_of_feature_nodes+num_of_label_nodes):
+                            for jj in range(i+1,num_of_feature_nodes+num_of_label_nodes):
                                 if j!=jj and jj!=i:
                                     if jj<num_of_feature_nodes:
                                         sat_file.write(f"!tau_{i:d}_{f}_{b:d}_{jj:d}")
@@ -176,7 +176,7 @@ def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
                     else:
                         sat_file.write("(")
                         sat_file.write(f"tau_{i:d}_{f}_{b:d}_{lable_node_id[j-num_of_feature_nodes][0]}_{lable_node_id[j-num_of_feature_nodes][1]} ")
-                        for jj in range(num_of_feature_nodes+num_of_label_nodes):
+                        for jj in range(i+1,num_of_feature_nodes+num_of_label_nodes):
                             if jj<num_of_feature_nodes:
                                 if jj!=j and jj!=i:
                                     sat_file.write(" & ")
@@ -213,7 +213,7 @@ def phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samp
         for i in range(num_of_feature_nodes):
             for f, fbu in feature_partition.items():
                 for b in range(fbu):
-                    for j in range(num_of_feature_nodes):
+                    for j in range(i+1,num_of_feature_nodes):
                         if(j!=i):
                             sat_file.write("   | ")
                             sat_file.write("(")

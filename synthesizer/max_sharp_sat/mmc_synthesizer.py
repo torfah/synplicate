@@ -117,14 +117,14 @@ def extract_program_map(encoding_path,witness_path):
     witness_file.close()
     return program_edges,program_nodes
 
-def synthesize_dot_code(target_path,program_egdes,program_nodes):
-    dot_file_path = target_path+"program/program.dot"
+def synthesize_dot_code(target_path,program_egdes,program_nodes,iteration):
+    dot_file_path = target_path+ f"program/program{iteration}.dot"
     dot_file = open(dot_file_path,"w")
 
     dot_file.write("digraph {\n")
     for value in program_egdes.values():
         if not value.isdigit():
-            dot_file.write(f"node [label={value},shape=\"diamond\",style=\"\"] {value}\n")
+            dot_file.write(f"node [label={value},style=\"\"] {value}\n")
     
     for node, feature in program_nodes.items():
         dot_file.write(f"node [label={feature},shape=\"diamond\",style=\"\"] {node}\n")
@@ -138,30 +138,83 @@ def synthesize_dot_code(target_path,program_egdes,program_nodes):
 
     dot_file.close()
 
-    png_path = target_path + "program/program.png"
+    png_path = target_path + f"program/program{iteration}.png"
 
     os.system(f"dot -Tpng {dot_file_path} -o {png_path}")
     return dot_file_path, png_path
 
-def synthesize_python_code(target_path,program_edges,program_nodes):
-    python_file_path = target_path+"program/program.py"
+def synthesize_python_code(target_path,program_edges,program_nodes,input_names,iteration):
+    python_file_path = target_path+ f"program/program{iteration}.py"
     python_file = open(python_file_path,"w") 
+
+    target_path_modified = target_path.replace("/",".").rstrip('.')
+    python_file.write("import sys\n")
+    python_file.write(f"sys.path.insert(0,\"{target_path}\")\n")
+    python_file.write(f"import feature_defs\n\n")
+
+    python_file.write(f"def flowchart({input_names[0]}")
+    for i in range(1,len(input_names)):
+        python_file.write(f", {input_names[i]}")
+
+    python_file.write("):\n")
+
+    # create flowchart edges and nodes maps
+    python_file.write(f"\tprogram_nodes ={{}}\n")
+    for node,feature in program_nodes.items():
+        python_file.write(f"\tprogram_nodes[\"{node}\"]= \"{feature}\"\n")
+
+    python_file.write(f"\n\tprogram_edges ={{}}\n")
+    for (source,partition), dest in program_edges.items():
+        python_file.write(f"\tprogram_edges[(\"{source}\",{partition})]= \"{dest}\"\n")
+
+    python_file.write("\n\tfeatures = feature_defs.retrieve_feature_defs()\n\n")
+
+    # compute backets for each feature
+    input_string = "["
+    for name in input_names:
+        input_string += f"(\"{name}\",{name}),"
+    input_string = input_string.rstrip(',')
+    input_string += "]"
+    
+    python_file.write(f"\tvalue_map = {{}} \n")
+    for node, feature in program_nodes.items():
+        python_file.write(f"\tvalue_map[\"{feature}\"] = features[\"{feature}\"]({input_string})")
+        python_file.write("\n")
+
+    python_file.write("\n")
+    python_file.write("\tflag = True\n")
+    python_file.write("\tcurrent_node = \"0\"\n")
+    # python_file.write("\tlabel=\"\"\n")
+    python_file.write(f"\twhile flag:\n")
+    python_file.write(f"\t\tcurrent_feature = program_nodes[current_node]\n")
+    python_file.write(f"\t\tnext_node = program_edges[current_node,value_map[current_feature]]\n")
+    python_file.write(f"\t\tif next_node.isdigit():\n")
+    python_file.write(f"\t\t\tcurrent_node = next_node\n")
+    python_file.write(f"\t\telse:\n")
+    python_file.write(f"\t\t\tcurrent_node = next_node\n")
+    python_file.write(f"\t\t\tflag = False\n")
+
+    # python_file.write("\tprint(current_node)\n")
+    python_file.write(f"\treturn current_node\n\n")
+
+    # python_file.write(f"print(f\"first result {{flowchart(-120.0,32.2,23222.9,1.6)}}\")")
+
 
     python_file.close()
 
     return python_file_path
 
-def extract_program(encoding_path,witness_path,target_path):
+def extract_program(encoding_path,witness_path,target_path,input_names,iteration):
 
     os.system(f"mkdir -p {target_path}program")
     program_edges, program_nodes = extract_program_map(encoding_path,witness_path)
 
-    dot_file_path, png_path = synthesize_dot_code(target_path, program_edges, program_nodes)
-    python_file_path = synthesize_python_code(target_path,program_edges,program_nodes)
+    dot_file_path, png_path = synthesize_dot_code(target_path, program_edges, program_nodes,iteration)
+    python_file_path = synthesize_python_code(target_path,program_edges,program_nodes,input_names,iteration)
 
     return python_file_path,dot_file_path,png_path
 
-def synthesize(benchmark_path,samples):
+def synthesize(benchmark_path,samples,iteration):
     
     print("Extracting synthesis configuration... ") 
     config = configure(benchmark_path) 
@@ -187,7 +240,16 @@ def synthesize(benchmark_path,samples):
     os.system(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
 
     # translate witness to program: extract program from mmc witness
-    program_path, dot_path, png_path = extract_program(encoding_path,witness_path,benchmark_path)
+    # extract program signature 
+    input_names = []
+    for s in samples.keys():
+        for i in range(len(s)):
+            input_names.append(s[i][0])
+        break
+    # print(input_names)
+    program_path, dot_path, png_path = extract_program(encoding_path,witness_path,benchmark_path,input_names,iteration)
     os.system(f"open {png_path}")
+
+    # os.system(f"python3 {program_path}")
 
     return program_path, dot_path
