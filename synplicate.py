@@ -5,10 +5,14 @@ import importlib
 
 
 # Read arguments
-num_of_samples = 4
+num_of_samples = 20
 # synthesis_config_path = "examples/california_census_simplified/config.mmc"
-synthesis_benchmark_path = "examples/california_census_simplified/"
-model_path = "examples/california_census_simplified/model"
+# synthesis_benchmark_path = "examples/california_census_simplified/"
+# model_path = "examples/california_census_simplified/model"
+
+synthesis_benchmark_path = "examples/loan_acquisition/"
+model_path = "examples/loan_acquisition/model"
+
 model = tf.keras.models.load_model(model_path) # load model 
 
 
@@ -33,6 +37,7 @@ while iteration<5:
     print(f"Synthesized program: {program_path}\nVisualization: {dot_path}")
 
     # Evaluator
+    # TODO
 
     iteration +=1
     # break
