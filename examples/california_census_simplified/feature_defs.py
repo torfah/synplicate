@@ -56,9 +56,9 @@ def test(outputs):
 def retrieve_feature_defs():
     feature_defs = {}
     feature_defs["population"] = population
-    feature_defs["medianIncome"] = median_income
+    feature_defs["median_income"] = median_income
     feature_defs["location"] = location
-    feature_defs["medianHousePrice"] = median_house_price
+    feature_defs["median_house_price"] = median_house_price
     feature_defs["test"] = test
 
     return feature_defs

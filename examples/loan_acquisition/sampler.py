@@ -22,14 +22,14 @@ def sample(model,num_of_samples):
     print("----------------------")
     for i in range(num_of_samples):
 
-        feature1_value = random.randint(18,79)
+        feature1_value = random.randint(18,30)
         print(feature1_name, ": ", feature1_value,end =" | ")
 
         feature2_value = truncate(abs(random.uniform(10000,4000)),2)
         print(feature2_name, ": ", feature2_value,end =" | ")
 
         prediction = model.predict({feature1_name: np.array([feature1_value]), 
-                                feature2_name: np.array([feature2_value])})
+                                    feature2_name: np.array([feature2_value])})
         print(prediction)
         print("----------------------")
 

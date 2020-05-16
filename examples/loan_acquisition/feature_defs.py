@@ -29,7 +29,7 @@ def monthly_income(inputs):
 
 def approved(outputs):
     value = outputs[0][1]   
-    if value< 0.4 and value>0.2:
+    if value< 0.5:
         return 0
     else: 
         return 1

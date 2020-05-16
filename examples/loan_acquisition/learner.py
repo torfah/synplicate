@@ -29,14 +29,19 @@ def create_model(my_learning_rate, my_feature_layer):
                                   activation='relu', 
                                   name='Hidden1'))
   
-  # Second hidden layer with 12 nodes. 
-  model.add(tf.keras.layers.Dense(units=12, 
-                                  activation='relu', 
-                                  name='Hidden2'))
+  # # Second hidden layer with 12 nodes. 
+  # model.add(tf.keras.layers.Dense(units=12, 
+  #                                 activation='relu', 
+  #                                 name='Hidden2'))
+
+  # # third hidden layer with 12 nodes. 
+  # model.add(tf.keras.layers.Dense(units=12, 
+  #                                 activation='relu', 
+  #                                 name='Hidden3'))
   
   # Output layer.
   model.add(tf.keras.layers.Dense(units=1,  
-                                  name='Output'))                              
+                                  name='Output',activation=None, use_bias=True))  
   
   model.compile(optimizer=tf.keras.optimizers.Adam(lr=my_learning_rate),
                 loss="mean_squared_error",

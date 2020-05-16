@@ -1,9 +1,9 @@
 import os
 
-def create_feature_string(feature):
+def create_val_string(val):
     name = ""
-    value = feature
-    if feature<0:
+    value = val
+    if val<0:
         name += "N"
         value = -1*value
     else:
@@ -12,63 +12,62 @@ def create_feature_string(feature):
     name += str(int(value*100))
     return name
 
-def phi_Gamma(sat_file,samples):
-    sat_file.write("phi_Gamma := \n")
-   
-    counter = 0
-    feature_var_id ={} # maps feature number and sample number to variable 
-    num_of_inputs = len(list(samples)[0])
-    num_of_samples = len(samples)
-    num_of_labels = len(samples[list(samples)[0]])
-   
-    sat_file.write("(\n")
+def phi_Gamma_val(sat_file,samples):
+    val_var_map = {} # maps input number and sample number to variable 
+
+    sat_file.write("phi_Gamma_val := \n")
+    sat_file.write("F")
     for inputs, labels in samples.items():
-        sat_file.write("(")
-        for i in range(len(inputs)):
-            sat_file.write(f"{inputs[i][0]}_")
-            sat_file.write(create_feature_string(inputs[i][1]))
-            feature_var_id[(i,counter)] = f"{inputs[i][0]}_{create_feature_string(inputs[i][1])}"
-            if i < len(inputs)-1:
-                sat_file.write(" & ")
-        sat_file.write(" & ")
-        for i in range(len(labels)):
-            sat_file.write(f"{labels[i][0]}_")
-            sat_file.write(create_feature_string(labels[i][1]))
-            feature_var_id[(i+num_of_inputs,counter)] = f"{labels[i][0]}_{create_feature_string(labels[i][1])}"
-            if i < len(labels)-1:
-                sat_file.write(" & ")
+        sat_file.write("|\n")
+        sat_file.write("( T")
+        for inp in inputs:
+            if inp[0] not in val_var_map.keys():
+                val_var_map[inp[0]] = []
+            temp_string = f"{inp[0]}_{create_val_string(inp[1])}"
+            sat_file.write(f" & {temp_string}")
+            if temp_string not in val_var_map[inp[0]]:
+                val_var_map[inp[0]].append(temp_string)
+        for label in labels:
+            if label[0] not in val_var_map.keys():
+                val_var_map[label[0]] = []
+            temp_string = f"{label[0]}_{create_val_string(label[1])}"
+            sat_file.write(f" & {temp_string}")
+            if temp_string not in val_var_map[label[0]]:
+                val_var_map[label[0]].append(temp_string)
         sat_file.write(")")
-        if counter < len(samples)-1:
-            sat_file.write(" | ")
-        sat_file.write("\n")
-        counter += 1 
-    sat_file.write(")\n")
-    sat_file.write(" & ")
-    sat_file.write("\n")
-    for f in range(num_of_inputs + num_of_labels):
-        sat_file.write("(")
-        for i in range(num_of_samples):
-            sat_file.write("(")
-            sat_file.write(feature_var_id[(f,i)])
-            sat_file.write(" => ")
-            flag = False
-            for j in range(num_of_samples):
-                if (feature_var_id[(f,j)]!=feature_var_id[(f,i)]):
-                    if flag: 
-                        sat_file.write(" & ")
-                    flag = True
-                    sat_file.write("!")
-                    sat_file.write(feature_var_id[(f,j)])
-            if i<num_of_samples-1:
-                sat_file.write(") & ")
-            else:
-                sat_file.write(")")
-        sat_file.write(")")
-        if f<(num_of_inputs + num_of_labels)-1:
-            sat_file.write("& ")
-        sat_file.write("\n")
 
     sat_file.write(";\n")
+    return val_var_map
+
+def phi_Gamma_det(sat_file,samples,val_var_map):
+    sat_file.write("phi_Gamma_det := \n")
+
+    sat_file.write("T")
+    for name, values in val_var_map.items():
+        sat_file.write(" &\n")
+        sat_file.write(f"(T")
+        for i in range(len(values)):
+            sat_file.write(" & (")
+            sat_file.write(f"{values[i]} => ")
+            sat_file.write("(T")
+            for j in range(i+1,len(values)):
+                sat_file.write(" & ")
+                sat_file.write(f"!{values[j]}")
+            sat_file.write(")")
+            sat_file.write(")")
+        sat_file.write(")")
+
+    sat_file.write(";\n")
+
+def phi_Gamma(sat_file,samples):
+    val_var_map ={} # maps input number and sample number to variable 
+    
+    val_var_map = phi_Gamma_val(sat_file,samples) 
+    sat_file.write("\n")
+    phi_Gamma_det(sat_file,samples,val_var_map)
+    sat_file.write("\n")
+    sat_file.write("phi_Gamma :=  phi_Gamma_val & phi_Gamma_det;\n")
+   
 
 def phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition):
     num_of_features = len(feature_partition)
@@ -404,13 +403,13 @@ def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_part
     phi_Gamma(sat_file,samples)
 
     # phi_T
-    phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition)
+    # phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition)
 
     # phi_sim 
     # compute mapping between (feature,bucket) -> sample
-    phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samples,feature_defs)
+    # phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samples,feature_defs)
 
-
+    sat_file.write("\n")
     sat_file.write("FORMULA := phi_Gamma & phi_T & phi_sim;\n")
     sat_file.write("ASSIGN FORMULA;")
     sat_file.close()
@@ -424,31 +423,31 @@ def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_part
 
     print("Translating to maxdimacs...")
     dimacs_file_path = output_path+"encoding.dimacs"
-    maximization_vars = extract_max_variables(dimacs_tempfile_path)
-    name_list = []
-    for k,v in samples.items():
-        for i in range(len(k)):
-            name_list.append(k[i][0])
-        for j in range(len(v)):
-            name_list.append(v[j][0])
-        break
-    counting_vars = extract_ind_variables(dimacs_tempfile_path,name_list)
-    dimacs_file = open(dimacs_file_path,"w")
-    dimacs_file.write("c max")
-    for s in maximization_vars:
-        dimacs_file.write(f" {s} ")
-    dimacs_file.write("0\n")    
+    # maximization_vars = extract_max_variables(dimacs_tempfile_path)
+    # name_list = []
+    # for k,v in samples.items():
+    #     for i in range(len(k)):
+    #         name_list.append(k[i][0])
+    #     for j in range(len(v)):
+    #         name_list.append(v[j][0])
+    #     break
+    # counting_vars = extract_ind_variables(dimacs_tempfile_path,name_list)
+    # dimacs_file = open(dimacs_file_path,"w")
+    # dimacs_file.write("c max")
+    # for s in maximization_vars:
+    #     dimacs_file.write(f" {s} ")
+    # dimacs_file.write("0\n")    
 
-    dimacs_file.write("c ind")
-    for s in counting_vars:
-        dimacs_file.write(f" {s} ")
-    dimacs_file.write("0\n") 
+    # dimacs_file.write("c ind")
+    # for s in counting_vars:
+    #     dimacs_file.write(f" {s} ")
+    # dimacs_file.write("0\n") 
 
-    dimacs_temp_file = open(dimacs_tempfile_path,"r")
-    temp_string = dimacs_temp_file.read()
-    dimacs_file.write(temp_string)
-    dimacs_temp_file.close()
-    dimacs_file.close()
+    # dimacs_temp_file = open(dimacs_tempfile_path,"r")
+    # temp_string = dimacs_temp_file.read()
+    # dimacs_file.write(temp_string)
+    # dimacs_temp_file.close()
+    # dimacs_file.close()
 
     # os.system(f"rm {output_path}encoding_temp.dimacs")
 

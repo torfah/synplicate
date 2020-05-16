@@ -1,11 +1,10 @@
-
 import tensorflow as tf
 from synthesizer.max_sharp_sat import mmc_synthesizer
 import importlib
 
 
 # Read arguments
-num_of_samples = 20
+num_of_samples = 5
 # synthesis_config_path = "examples/california_census_simplified/config.mmc"
 # synthesis_benchmark_path = "examples/california_census_simplified/"
 # model_path = "examples/california_census_simplified/model"
@@ -22,7 +21,7 @@ sampler = importlib.import_module(f".sampler",synthesis_benchmark_path.replace("
 samples = {}
 iteration = 0
 # main loop
-while iteration<5:
+while iteration<1:
     # Input: model: model of a deep neural network.
     #        num_of_samples: sampling rate
     # Output: samples: Map {tuple of ordered inputs -> tuple of ordered lables}
