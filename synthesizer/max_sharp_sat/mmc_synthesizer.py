@@ -87,8 +87,8 @@ def extract_program_map(encoding_path,witness_path):
                 # extract origin state, partition, successor state 
                 attributes = name.split('_')
                 source  = attributes[1]
-                partition = attributes[3]
-                index = 3
+                partition = attributes[2]
+                index = 2
                 while (not partition.isdigit()):
                     index += 1
                     partition = attributes[index]
