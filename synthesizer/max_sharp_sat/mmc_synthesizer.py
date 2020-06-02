@@ -144,19 +144,21 @@ def synthesize_dot_code(target_path,program_egdes,program_nodes,iteration):
     return dot_file_path, png_path
 
 def synthesize_python_code(target_path,program_edges,program_nodes,input_names,iteration):
-    python_file_path = target_path+ f"program/program{iteration}.py"
-    python_file = open(python_file_path,"w") 
+    python_file_path = target_path+ f"program/"
+    python_file = open(python_file_path+f"program{iteration}.py","w") 
 
     target_path_modified = target_path.replace("/",".").rstrip('.')
     python_file.write("import sys\n")
     python_file.write(f"sys.path.insert(0,\"{target_path}\")\n")
     python_file.write(f"import feature_defs\n\n")
 
-    python_file.write(f"def flowchart({input_names[0]}")
-    for i in range(1,len(input_names)):
-        python_file.write(f", {input_names[i]}")
+    # python_file.write(f"def execute({input_names[0]}")
+    # for i in range(1,len(input_names)):
+    #     python_file.write(f", {input_names[i]}")
+    # python_file.write("):\n")
 
-    python_file.write("):\n")
+
+    python_file.write(f"def execute(inputs):\n")
 
     # create flowchart edges and nodes maps
     python_file.write(f"\tprogram_nodes ={{}}\n")
@@ -171,8 +173,10 @@ def synthesize_python_code(target_path,program_edges,program_nodes,input_names,i
 
     # compute backets for each feature
     input_string = "["
+    input_idx = 0
     for name in input_names:
-        input_string += f"(\"{name}\",{name}),"
+        input_string += f"(\"{name}\",inputs[{input_idx}]),"
+        input_idx +=1
     input_string = input_string.rstrip(',')
     input_string += "]"
     

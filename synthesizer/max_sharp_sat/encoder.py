@@ -105,7 +105,8 @@ def phi_T_transitions(sat_file,num_of_feature_nodes,features_partition,label_par
                 for nodep in range(node+1,num_of_feature_nodes):
                     sat_file.write(" | ")
                     sat_file.write("(")
-                    sat_file.write(f"tau_{node:d}_{feature_bucket:d}_{nodep}")
+                    sat_file.write(f"tau_{node:d}_{feature_bucket:d}_{nodep} &")
+                    sat_file.write("(T")
                     for nodepp in range(node+1,num_of_feature_nodes):
                         if nodepp != nodep:
                             sat_file.write(" & ")
@@ -115,11 +116,16 @@ def phi_T_transitions(sat_file,num_of_feature_nodes,features_partition,label_par
                             sat_file.write(" & ")
                             sat_file.write(f"!tau_{node:d}_{feature_bucket:d}_{label}_{label_bucket}")
                     sat_file.write(")")
+                    sat_file.write(")")
+                sat_file.write(" | (T")
                 for label, label_buckets in label_partition.items():
+                    sat_file.write(" & ")
+                    sat_file.write("(F")
                     for label_bucket in range(label_buckets):
                         sat_file.write(" | ")
                         sat_file.write("(")
-                        sat_file.write(f"tau_{node:d}_{feature_bucket:d}_{label}_{label_bucket:d}")
+                        sat_file.write(f"tau_{node:d}_{feature_bucket:d}_{label}_{label_bucket:d} & ")
+                        sat_file.write("(T")
                         for label_bucketp in range(label_buckets):
                             if label_bucketp != label_bucket:
                                 sat_file.write(" & ")
@@ -128,6 +134,11 @@ def phi_T_transitions(sat_file,num_of_feature_nodes,features_partition,label_par
                             sat_file.write(" & ")
                             sat_file.write(f"!tau_{node:d}_{feature_bucket:d}_{nodep}")
                         sat_file.write(")")
+                        sat_file.write(")")
+
+                    sat_file.write(")")  
+        
+                sat_file.write(")")
                 sat_file.write(")")
             sat_file.write(")")
             sat_file.write(")")
@@ -202,48 +213,92 @@ def phi_sim_transition(sat_file,num_of_feature_nodes,feature_partition,label_par
     for node in range(num_of_feature_nodes):
         sat_file.write(" &\n")
         sat_file.write("(")
-        sat_file.write("(")
-        sat_file.write("F")
+        sat_file.write(f"pi_{node:d} == ")
+        sat_file.write("(F")
         for feature, feature_buckets in feature_partition.items():
-            for bucket in range(feature_buckets):
-                for nodep in range(node+1,num_of_feature_nodes):
-                    sat_file.write(" |\n")
-                    sat_file.write("(")
-                    sat_file.write(f"pi_{nodep:d} & lam_{node:d}_{feature} & tau_{node:d}_{bucket:d}_{nodep:d} & ")
-                    sat_file.write("(F")
-                    for inputs in samples.keys():
+            for feature_bucket in range(feature_buckets):
+                sat_file.write(" | \n")
+                sat_file.write("         (")
+                sat_file.write(f"lam_{node:d}_{feature}") # feature in node 
+                sat_file.write(" & (F") # compare to chosen sample
+                for inputs in samples.keys():
                         input_bucket = feature_defs[feature](inputs)
-                        if input_bucket==bucket:
+                        if input_bucket==feature_bucket:
                             sat_file.write(" | ")
                             sat_file.write("(T")
                             for input_name, input_val in inputs:
                                 sat_file.write(" & ")
                                 sat_file.write(f"{input_name}_{create_val_string(input_val)}")
                             sat_file.write(")")
+                sat_file.write(")")
+                sat_file.write(" & (T") # transitions with feature_bucket
+                for nodep in range(node+1,num_of_feature_nodes): # for feature nodes
+                    sat_file.write(" & ")
+                    sat_file.write("(")
+                    sat_file.write(f"tau_{node:d}_{feature_bucket:d}_{nodep:d} => pi_{nodep:d}")
                     sat_file.write(")")
-                    sat_file.write(")")
-                for label_name, label_buckets in label_partition.items():
+                for label_name, label_buckets in label_partition.items(): # for label nodes
                     for label_bucket in range(label_buckets):
-                        sat_file.write(" |\n")
+                        sat_file.write(" & ")
                         sat_file.write("(")
-                        sat_file.write(f"pi_{label_name}_{label_bucket:d} & lam_{node:d}_{feature} & tau_{node:d}_{bucket:d}_{label_name}_{label_bucket:d} & ")
-                        sat_file.write("(F")
-                        for inputs in samples.keys():
-                            input_bucket = feature_defs[feature](inputs)
-                            if input_bucket==bucket:
-                                sat_file.write(" | ")
-                                sat_file.write("(T")
-                                for input_name, input_val in inputs:
-                                    sat_file.write(" & ")
-                                    sat_file.write(f"{input_name}_{create_val_string(input_val)}")
-                                sat_file.write(")")
+                        sat_file.write(f"tau_{node:d}_{feature_bucket:d}_{label_name}_{label_bucket:d} => pi_{label_name}_{label_bucket:d}")
                         sat_file.write(")")
-                        sat_file.write(")")
+                sat_file.write(")")
+                sat_file.write(")")
         sat_file.write(")")
-        sat_file.write(f"== pi_{node:d} ")
         sat_file.write(")")
 
     sat_file.write(";\n")
+
+# def phi_sim_transition(sat_file,num_of_feature_nodes,feature_partition,label_partition,samples,feature_defs):
+    # sat_file.write("phi_sim_transition :=\n")
+
+    # sat_file.write("T")
+    # for node in range(num_of_feature_nodes):
+    #     sat_file.write(" &\n")
+    #     sat_file.write("(")
+    #     sat_file.write("(")
+    #     sat_file.write("F")
+    #     for feature, feature_buckets in feature_partition.items():
+    #         for bucket in range(feature_buckets):
+    #             for nodep in range(node+1,num_of_feature_nodes):
+    #                 sat_file.write(" |\n")
+    #                 sat_file.write("(")
+    #                 sat_file.write(f"pi_{nodep:d} & lam_{node:d}_{feature} & tau_{node:d}_{bucket:d}_{nodep:d} & ")
+    #                 sat_file.write("(F")
+    #                 for inputs in samples.keys():
+    #                     input_bucket = feature_defs[feature](inputs)
+    #                     if input_bucket==bucket:
+    #                         sat_file.write(" | ")
+    #                         sat_file.write("(T")
+    #                         for input_name, input_val in inputs:
+    #                             sat_file.write(" & ")
+    #                             sat_file.write(f"{input_name}_{create_val_string(input_val)}")
+    #                         sat_file.write(")")
+    #                 sat_file.write(")")
+    #                 sat_file.write(")")
+    #             for label_name, label_buckets in label_partition.items():
+    #                 for label_bucket in range(label_buckets):
+    #                     sat_file.write(" |\n")
+    #                     sat_file.write("(")
+    #                     sat_file.write(f"pi_{label_name}_{label_bucket:d} & lam_{node:d}_{feature} & tau_{node:d}_{bucket:d}_{label_name}_{label_bucket:d} & ")
+    #                     sat_file.write("(F")
+    #                     for inputs in samples.keys():
+    #                         input_bucket = feature_defs[feature](inputs)
+    #                         if input_bucket==bucket:
+    #                             sat_file.write(" | ")
+    #                             sat_file.write("(T")
+    #                             for input_name, input_val in inputs:
+    #                                 sat_file.write(" & ")
+    #                                 sat_file.write(f"{input_name}_{create_val_string(input_val)}")
+    #                             sat_file.write(")")
+    #                     sat_file.write(")")
+    #                     sat_file.write(")")
+    #     sat_file.write(")")
+    #     sat_file.write(f"== pi_{node:d} ")
+    #     sat_file.write(")")
+
+    # sat_file.write(";\n")
 
 # path encoding
 def phi_sim(sat_file,num_of_feature_nodes,feature_partition,label_partition,samples,feature_defs):
