@@ -29,10 +29,7 @@ def monthly_income(inputs):
 
 def approved(outputs):
     value = outputs[0][1]   
-    if value< 0.5:
-        return 0
-    else: 
-        return 1
+    return value
 
 
 def retrieve_feature_defs():

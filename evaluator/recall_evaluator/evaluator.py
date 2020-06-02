@@ -8,7 +8,7 @@ import random
 
 radius = 2
 threshold = 0.02
-sample_rate = 10
+sample_rate = 15
 
 
 def evaluate(sampler,program_path,samples):
@@ -61,6 +61,8 @@ def evaluate(sampler,program_path,samples):
     print(f"Previous distance: {distance}")
     newdistance = 1- newtp/(newfn+newtp)
     print(f"Current distance: {newdistance}")
+
+    print(abs(newdistance - distance))
 
     return abs(newdistance - distance) <=  threshold 
 
