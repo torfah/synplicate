@@ -29,10 +29,10 @@ def create_model(my_learning_rate, my_feature_layer):
                                   activation='relu', 
                                   name='Hidden1'))
   
-  # # Second hidden layer with 12 nodes. 
-  # model.add(tf.keras.layers.Dense(units=12, 
-  #                                 activation='relu', 
-  #                                 name='Hidden2'))
+  # Second hidden layer with 12 nodes. 
+  model.add(tf.keras.layers.Dense(units=12, 
+                                  activation='relu', 
+                                  name='Hidden2'))
 
   # # third hidden layer with 12 nodes. 
   # model.add(tf.keras.layers.Dense(units=12, 
@@ -40,12 +40,17 @@ def create_model(my_learning_rate, my_feature_layer):
   #                                 name='Hidden3'))
   
   # Output layer.
-  model.add(tf.keras.layers.Dense(units=1,  
-                                  name='Output',activation=None, use_bias=True))  
+  model.add(tf.keras.layers.Dense(2)) 
+
+  # model.add(tf.keras.layers.Softmax())
   
-  model.compile(optimizer=tf.keras.optimizers.Adam(lr=my_learning_rate),
-                loss="mean_squared_error",
-                metrics=[tf.keras.metrics.MeanSquaredError()])
+  # model.compile(optimizer=tf.keras.optimizers.Adam(lr=my_learning_rate),
+  #               loss="mean_squared_error",
+  #               metrics=[tf.keras.metrics.MeanSquaredError()])
+
+  model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
 
   return model
 
@@ -63,10 +68,10 @@ def train_model(model, dataset, epochs, label_name,batch_size=None):
   
   # To track the progression of training, gather a snapshot
   # of the model's mean squared error at each epoch. 
-  hist = pd.DataFrame(history.history)
-  mse = hist["mean_squared_error"]
+  # hist = pd.DataFrame(history.history)
+  # mse = hist["mean_squared_error"]
 
-  return epochs, mse
+  return epochs
 
 train_df = pd.read_csv("loan_acquisition.csv")
 train_df = train_df.reindex(np.random.permutation(train_df.index)) # shuffle examples
@@ -87,7 +92,7 @@ my_feature_layer = tf.keras.layers.DenseFeatures(feature_columns)
 print("Learning...")
 # Hyperparameters.
 learning_rate = 0.03
-epochs = 50
+epochs = 100
 batch_size = 1000
 label_name = "approved"
 
@@ -97,7 +102,13 @@ my_model = create_model(learning_rate, my_feature_layer)
 # Train the model on the normalized training set. Passing the entire
 # normalized training set, but the model will only use the features
 # defined by the feature_layer.
-epochs, mse = train_model(my_model, train_df, epochs, label_name, batch_size)
+epochs  = train_model(my_model, train_df, epochs, label_name, batch_size)
 
-tf.keras.models.save_model(my_model,"model")
+soft_model = tf.keras.Sequential([my_model,tf.keras.layers.Softmax()])
+
+soft_model.predict({'age':np.array([20]),'monthly_income':np.array([2000])})
+
+# epochs  = train_model(my_model, train_df, epochs, label_name, batch_size)
+
+tf.keras.models.save_model(soft_model,"model")
 my_model.summary()
