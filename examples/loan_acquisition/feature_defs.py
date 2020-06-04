@@ -21,7 +21,7 @@ def age(inputs):
 def monthly_income(inputs):
     assert(check_num_of_inputs(inputs))
     value = inputs[1][1] 
-    if value<8000.0:
+    if value<6000.0:
         return 1
     else:
         return 0
