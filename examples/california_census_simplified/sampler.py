@@ -6,11 +6,14 @@ import random
 import math
 
 
+model_path = "examples/california_census_simplified/model"
+model = tf.keras.models.load_model(model_path) # load model 
+
 def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
 
-def sample(model,num_of_samples):
+def sample(num_of_samples):
 
     samples = {}
 
