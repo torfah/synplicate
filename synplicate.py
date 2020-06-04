@@ -73,7 +73,7 @@ samples.update(sampler.sample(num_of_samples))
 done = False
 global_synthesis_time = 0
 global_evaluation_time = 0
-while not done: 
+while not done and iteration<10: 
 
     newsamples = {}
     synthesis_time = 0
@@ -93,7 +93,8 @@ while not done:
     # Evaluator
     start = timeit.default_timer()
     print("Evaluating program against model...")
-    done = evaluator.evaluate(sampler,program_path,samples)
+    done, test_samples = evaluator.evaluate(sampler,program_path,samples)
+    dump_samples(test_samples,synthesis_benchmark_path,f"test_samples_{iteration}")
 
     if not done :
         print("Refining sample set...")
