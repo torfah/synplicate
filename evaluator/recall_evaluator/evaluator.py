@@ -13,6 +13,16 @@ sample_rate = 15
 
 def evaluate(sampler,program_path,samples):
 
+    # get input names
+    input_names = []
+    for key in (samples.keys()):
+        for name, val in key:
+            input_names.append(name)
+        break
+
+    test_samples = {}
+
+
     # import program
     program = importlib.import_module(f".program0",program_path.replace("/",".").rstrip('.'))
 
@@ -44,27 +54,57 @@ def evaluate(sampler,program_path,samples):
 
 
         # print(neighborhood_region) 
+
+        # print("|---Evaluating in neighborhood...")
         for neighbor in itertools.product(*neighborhood_region):
             # print(neighbor)
             newoutputs = sampler.predict(list(neighbor))
+            key = []
+            for item in range(len(neighbor)):
+                key.append((input_names[item],neighbor[item]))
+
+            # if not (tuple(key) in test_samples):
+
+            test_samples[tuple(key)] = newoutputs
+
             if program.execute(list(neighbor)) == f"{newoutputs[0][0]}_{newoutputs[0][1]}": # TODO this works only for classifiers 
                 newtp +=1
             else:
                 newfn +=1
+
             # print(f"Program returns: {program.execute(list(neighbor))}\n")
             # print(f"Sampler computed:{outputs}\n")
+    # print("Uniform evalutions...")
+    # evaluate over uniform sampling from whole space
+    uniform_samples = sampler.uniform(10)
+    utp =0
+    ufn =0
+    for inputs, outputs in uniform_samples.items():
+        # compute inputs of sample
+        input_values = []
+        for input_name, input_value in inputs:
+            input_values.append(input_value)
+        
+        if program.execute(input_values) == f"{outputs[0][0]}_{outputs[0][1]}":
+            utp +=1
+        else:
+            ufn +=1
 
-    print(f"Previous true positives:{tp}, previous false negatives: {fn}")
-    print(f" Current true positives:{newtp}, current false negatives: {newfn}")
+    print(f"Current true positives:{tp}, and false negatives: {fn}")
+    print(f"Neighbor true positives:{newtp}, and false negatives: {newfn}")
+    print(f"Uniform true positives:{utp}, and false negatives: {ufn}")
 
     distance = 1- tp/(fn+tp)
-    print(f"Previous distance: {distance}")
+    print(f"Current distance: {distance}")
     newdistance = 1- newtp/(newfn+newtp)
-    print(f"Current distance: {newdistance}")
+    print(f"Neighbor distance: {newdistance}")
+    udistance = 1- utp/(ufn+utp)
+    print(f"Uniform distance: {udistance}")
 
     print(abs(newdistance - distance))
 
-    return abs(newdistance - distance) <=  threshold 
+
+    return abs(newdistance - distance) <=  threshold, test_samples
 
 
 
@@ -100,7 +140,7 @@ def refine(sampler,program_path, samples):
                 region.append(i+j)
             neighborhood_region.append(region)
 
-    
+        # print("|--Sampling in neighborhood...")
         for neighbor in itertools.product(*neighborhood_region):
             # print(count)
             newoutputs = sampler.predict(list(neighbor))
