@@ -241,7 +241,7 @@ def synthesize(benchmark_path,samples,iteration):
     # maximum model counting 
     print("Maximum model counting...")
     witness_path = output_path + "witness.txt"
-    os.system(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
+    os.system(f"python3 synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
 
     # translate witness to program: extract program from mmc witness
     # extract program signature 
