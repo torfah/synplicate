@@ -40,7 +40,7 @@ def dump_samples(samples,path,file_name):
 
 
 # Read arguments
-num_of_samples = 20
+num_of_samples = 50
 # synthesis_config_path = "examples/california_census_simplified/config.mmc"
 # synthesis_benchmark_path = "examples/california_census_simplified/"
 # model_path = "examples/california_census_simplified/model"
