@@ -27,7 +27,7 @@ def sample(num_of_samples):
     # test_label = np.array(test_features.pop(label_name)) # isolate the label
 
     # Normalization factors
-    train_df = pd.read_csv("https://download.mlcc.google.com/mledu-datasets/california_housing_train.csv")
+    train_df = pd.read_csv("examples/california_census_simplified/california_housing_train_classifier.csv")
     train_df_mean = train_df.mean()
     train_df_std = train_df.std()
 
@@ -35,8 +35,8 @@ def sample(num_of_samples):
     # print(train_df_std)
 
     # create 100 (features, Label) samples
-    feature1_name = 'longitude'
-    feature2_name = 'latitude'
+    # feature1_name = 'longitude'
+    # feature2_name = 'latitude'
     feature3_name = 'population'
     feature4_name = 'median_income'
 
@@ -44,15 +44,15 @@ def sample(num_of_samples):
     for i in range(num_of_samples):
         print("Sample", i,end =": ")
         # Feature 1
-        feature1_value = random.uniform(-124.3,-114.3)
-        print(feature1_name, ": ", feature1_value,end =" | ")
-        feature1_value_norm = truncate((feature1_value - train_df_mean[feature1_name])/train_df_std[feature1_name],2)
-        # print(feature1_name, "_norm: ", feature1_value_norm,end =" | ")
+        # feature1_value = random.uniform(-124.3,-114.3)
+        # print(feature1_name, ": ", feature1_value,end =" | ")
+        # feature1_value_norm = truncate((feature1_value - train_df_mean[feature1_name])/train_df_std[feature1_name],2)
+        # # print(feature1_name, "_norm: ", feature1_value_norm,end =" | ")
 
-        # Feature 2
-        feature2_value = random.uniform(32.5,42.5)
-        print(feature2_name, ": ", feature2_value,end =" | ")
-        feature2_value_norm = truncate((feature2_value - train_df_mean[feature2_name])/train_df_std[feature2_name],2)
+        # # Feature 2
+        # feature2_value = random.uniform(32.5,42.5)
+        # print(feature2_name, ": ", feature2_value,end =" | ")
+        # feature2_value_norm = truncate((feature2_value - train_df_mean[feature2_name])/train_df_std[feature2_name],2)
         # print(feature2_name, "_norm: ", feature2_value_norm,end =" | ")
 
         # Feature 3
@@ -67,24 +67,51 @@ def sample(num_of_samples):
         feature4_value_norm = truncate((feature4_value - train_df_mean[feature4_name])/train_df_std[feature4_name],2)
         # print(feature4_name, "_norm: ", feature4_value_norm, end =" =>  ")
 
-        prediction = model.predict({feature1_name: np.array([feature1_value_norm]), 
-                                feature2_name: np.array([feature2_value_norm]), 
+        prediction = model.predict({
+            # feature1_name: np.array([feature1_value_norm]), 
+                                # feature2_name: np.array([feature2_value_norm]), 
                                 feature3_name:np.array([feature3_value_norm]),
                                 feature4_name:np.array([feature4_value_norm])})
 
 
         print(prediction)
         print("----------------------")
+        prediction_value = prediction[0][0]
+        c = 0
+        for i in range(4):
+            if prediction[0][i] > prediction_value:
+                prediction_value = prediction[0][i]
+                c = i
         # label = True
         # if (prediction[0][0])> 0: 
         #     label = True 
         # else:
         #     label = False
-        samples[(feature1_name,feature1_value),(feature2_name,feature2_value),(feature3_name,feature3_value),(feature4_name,feature4_value)] = [("median_house_price",prediction[0][0])]
+        samples[(feature3_name,feature3_value),(feature4_name,feature4_value)] = [("Class",c)]
     
     return samples
 
+def predict(inputs):
 
+    feature1_name = 'latitude'
+    feature2_name = 'longitude'
+    feature3_name = 'population'
+    feature4_name = 'median_income'
+
+    prediction = model.predict({feature1_name: np.array([inputs[0]]), 
+                                feature2_name: np.array([inputs[1]]),
+                                feature3_name: np.array([inputs[1]]),
+                                feature4_name: np.array([inputs[1]])
+                               })
+
+    prediction_value = prediction[0][0]
+    c = 0
+    for i in range(4):
+        if prediction[0][i] > prediction_value:
+            prediction_value = prediction[0][i]
+            c = i
+
+    return [("Class",c)]
 
 ############## testing #############
 # Load model 

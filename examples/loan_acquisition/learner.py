@@ -29,13 +29,13 @@ def create_model(my_learning_rate, my_feature_layer):
                                   activation='relu', 
                                   name='Hidden1'))
   
-  # Second hidden layer with 12 nodes. 
+  # # Second hidden layer with 12 nodes. 
   model.add(tf.keras.layers.Dense(units=12, 
                                   activation='relu', 
                                   name='Hidden2'))
 
-  # # third hidden layer with 12 nodes. 
-  # model.add(tf.keras.layers.Dense(units=12, 
+  # # # third hidden layer with 12 nodes. 
+  # model.add(tf.keras.layers.Dense(units=6, 
   #                                 activation='relu', 
   #                                 name='Hidden3'))
   
@@ -73,7 +73,7 @@ def train_model(model, dataset, epochs, label_name,batch_size=None):
 
   return epochs
 
-train_df = pd.read_csv("loan_acquisition.csv")
+train_df = pd.read_csv("loan_acquisition_age_income_bias.csv")
 train_df = train_df.reindex(np.random.permutation(train_df.index)) # shuffle examples
 
 # Create feature list: latitude x longitude, mean_income, population
@@ -91,7 +91,7 @@ my_feature_layer = tf.keras.layers.DenseFeatures(feature_columns)
 # Learning!!!
 print("Learning...")
 # Hyperparameters.
-learning_rate = 0.03
+learning_rate = 0.01
 epochs = 100
 batch_size = 1000
 label_name = "approved"

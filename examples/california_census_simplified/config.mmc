@@ -1,5 +1,5 @@
 size = 1
-features = population:4, median_income:2, location:3
-labels = median_house_price:5
+features = population:4, median_income:2
+labels = Class:4
 extend = False
 feature_defs = feature_defs

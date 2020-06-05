@@ -6,8 +6,8 @@ import random
 
 
 
-radius = 2
-threshold = 0.02
+radius = 1
+threshold = 0.01
 sample_rate = 15
 
 
@@ -76,30 +76,30 @@ def evaluate(sampler,program_path,samples):
             # print(f"Sampler computed:{outputs}\n")
     # print("Uniform evalutions...")
     # evaluate over uniform sampling from whole space
-    uniform_samples = sampler.uniform(10)
+    # uniform_samples = sampler.uniform(10)
     utp =0
     ufn =0
-    for inputs, outputs in uniform_samples.items():
-        # compute inputs of sample
-        input_values = []
-        for input_name, input_value in inputs:
-            input_values.append(input_value)
+    # for inputs, outputs in uniform_samples.items():
+    #     # compute inputs of sample
+    #     input_values = []
+    #     for input_name, input_value in inputs:
+    #         input_values.append(input_value)
         
-        if program.execute(input_values) == f"{outputs[0][0]}_{outputs[0][1]}":
-            utp +=1
-        else:
-            ufn +=1
+    #     if program.execute(input_values) == f"{outputs[0][0]}_{outputs[0][1]}":
+    #         utp +=1
+    #     else:
+    #         ufn +=1
 
     print(f"Current true positives:{tp}, and false negatives: {fn}")
     print(f"Neighbor true positives:{newtp}, and false negatives: {newfn}")
-    print(f"Uniform true positives:{utp}, and false negatives: {ufn}")
+    # print(f"Uniform true positives:{utp}, and false negatives: {ufn}")
 
     distance = 1- tp/(fn+tp)
     print(f"Current distance: {distance}")
     newdistance = 1- newtp/(newfn+newtp)
     print(f"Neighbor distance: {newdistance}")
-    udistance = 1- utp/(ufn+utp)
-    print(f"Uniform distance: {udistance}")
+    # udistance = 1- utp/(ufn+utp)
+    # print(f"Uniform distance: {udistance}")
 
     print(abs(newdistance - distance))
 

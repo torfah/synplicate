@@ -95,10 +95,10 @@ def sample(num_of_samples):
     print("----------------------")
     for i in range(num_of_samples):
 
-        feature1_value = random.choice([random.randint(25,65)])
+        feature1_value = random.choice([random.randint(25,80)])
         print(feature1_name, ": ", feature1_value,end =" | ")
 
-        feature2_value = truncate(abs(random.uniform(6000,3000)),2)
+        feature2_value = abs(random.randint(1000,10000))
         print(feature2_name, ": ", feature2_value,end =" | ")
 
         prediction = model.predict({feature1_name: np.array([feature1_value]), 
