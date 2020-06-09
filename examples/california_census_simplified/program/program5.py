@@ -4,18 +4,20 @@ import feature_defs
 
 def execute(inputs):
 	program_nodes ={}
-	program_nodes["0"]= "population"
+	program_nodes["1"]= "median_income"
+	program_nodes["0"]= "median_income"
 
 	program_edges ={}
-	program_edges[("0",3)]= "Class_1"
-	program_edges[("0",2)]= "Class_1"
-	program_edges[("0",1)]= "Class_2"
-	program_edges[("0",0)]= "Class_1"
+	program_edges[("1",1)]= "Class_3"
+	program_edges[("1",0)]= "Class_1"
+	program_edges[("0",1)]= "Class_1"
+	program_edges[("0",0)]= "1"
 
 	features = feature_defs.retrieve_feature_defs()
 
 	value_map = {} 
-	value_map["population"] = features["population"]([("population",inputs[0]),("median_income",inputs[1])])
+	value_map["median_income"] = features["median_income"]([("population",inputs[0]),("median_income",inputs[1])])
+	value_map["median_income"] = features["median_income"]([("population",inputs[0]),("median_income",inputs[1])])
 
 	flag = True
 	current_node = "0"

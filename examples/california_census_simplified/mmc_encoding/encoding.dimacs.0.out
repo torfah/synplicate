@@ -7,27 +7,18 @@ WARNING: manually-specified pivotAC and/or tApproxMC may not be large enough to 
 Omit those arguments to use safe default values.
 ApproxMC starting from iteration 0
 BoundedSATCount looking for 74 solutions
-Num Explored: 1 ind set size: 169
+Num Explored: 1 ind set size: 123
 Number of XOR hashes active: 1
 BoundedSATCount looking for 74 solutions
-Num Explored: 1 ind set size: 169
+Num Explored: 1 ind set size: 123
 Number of XOR hashes active: 2
 BoundedSATCount looking for 74 solutions
-Num Explored: 2 ind set size: 169
+Num Explored: 2 ind set size: 123
 Number of XOR hashes active: 4
 BoundedSATCount looking for 74 solutions
-Num Explored: 4 ind set size: 169
+Num Explored: 4 ind set size: 123
 Number of XOR hashes active: 8
 BoundedSATCount looking for 74 solutions
-Num Explored: 161 ind set size: 169
-Number of XOR hashes active: 6
+Num Explored: 8 ind set size: 123
+Number of XOR hashes active: 16
 BoundedSATCount looking for 74 solutions
-Num Explored: 167 ind set size: 169
-Number of XOR hashes active: 7
-BoundedSATCount looking for 74 solutions
-ApproxMC finished in 1.76314 s
-loThresh 13, hiThresh 71, startIteration 8
-Outputting 1 solutions from each UniGen2 call
-Making 1 loops. calls per loop: 20 remaining: 0
-Total time for UniGen2: 29.7715 s
-Samples generated: 20
