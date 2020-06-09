@@ -4,17 +4,21 @@ import feature_defs
 
 def execute(inputs):
 	program_nodes ={}
+	program_nodes["1"]= "monthly_income"
 	program_nodes["0"]= "age"
 
 	program_edges ={}
+	program_edges[("1",1)]= "approved_1"
+	program_edges[("1",0)]= "approved_1"
 	program_edges[("0",3)]= "approved_1"
-	program_edges[("0",2)]= "approved_1"
-	program_edges[("0",1)]= "approved_1"
-	program_edges[("0",0)]= "approved_0"
+	program_edges[("0",2)]= "1"
+	program_edges[("0",1)]= "1"
+	program_edges[("0",0)]= "1"
 
 	features = feature_defs.retrieve_feature_defs()
 
 	value_map = {} 
+	value_map["monthly_income"] = features["monthly_income"]([("age",inputs[0]),("monthly_income",inputs[1])])
 	value_map["age"] = features["age"]([("age",inputs[0]),("monthly_income",inputs[1])])
 
 	flag = True
