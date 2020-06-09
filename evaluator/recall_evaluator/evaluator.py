@@ -6,12 +6,12 @@ import random
 
 
 
-radius = 1
-threshold = 0.01
-sample_rate = 15
+# radius = 1
+# threshold = 0.01
+# sample_rate = 20
 
 
-def evaluate(sampler,program_path,samples):
+def evaluate(sampler,program_path,samples,radius,threshold):
 
     # get input names
     input_names = []
@@ -109,7 +109,7 @@ def evaluate(sampler,program_path,samples):
 
 
 
-def refine(sampler,program_path, samples):
+def refine(sampler,program_path, samples,radius,sample_rate):
 
     newsamples = {}
     # import program

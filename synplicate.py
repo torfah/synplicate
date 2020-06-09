@@ -4,6 +4,7 @@ from evaluator.recall_evaluator import evaluator
 import importlib
 import timeit
 import os
+import argparse
 
 
 def dump_samples(samples,path,file_name):
@@ -39,20 +40,38 @@ def dump_samples(samples,path,file_name):
     samples_file.close()
 
 
-# Read arguments
-num_of_samples = 40
-# synthesis_config_path = "examples/california_census_simplified/config.mmc"
-# synthesis_benchmark_path = "examples/california_census_simplified/"
-# model_path = "examples/california_census_simplified/model"
+# Parse arguments
+parser = argparse.ArgumentParser(description='synplicate', usage='%(prog)s [-h] [options] model_dir_path initial_num_samples radius sample_rate robustness num_iterations', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-synthesis_benchmark_path = "examples/california_census_simplified/"
+## required arguments
+
+parser.add_argument('modelDirPath', help='synplicate', metavar='model directory path')
+parser.add_argument('initNumSamples', help='number of initial samples', type=int)
+parser.add_argument('radius', help='neighborhood radius', type=int)
+parser.add_argument('sampleRate', help='refinement sample rate', type=int)
+parser.add_argument('robustness', help='epsilon', type=float)
+parser.add_argument('numIterations', help='number of refinement steps', type=int)
+
+args = parser.parse_args()
+
+num_of_samples = args.initNumSamples
+synthesis_benchmark_path = args.modelDirPath + "/"
+radius = args.radius
+rate = args.sampleRate
+threshold = args.robustness
+num_iterations = args.numIterations
+
+
+# synthesis_benchmark_path = "examples/california_census_simplified/"
+
+
+
 
 # Sampler:
 # import sampler
 sampler = importlib.import_module(f".sampler",synthesis_benchmark_path.replace("/",".").rstrip('.'))
 samples = {}
 iteration = 0
-threshold = 0.5
 
 # Initial set of samples (S0 in paper)
 # Input: model: model of a deep neural network.
@@ -73,7 +92,7 @@ samples.update(sampler.sample(num_of_samples))
 done = False
 global_synthesis_time = 0
 global_evaluation_time = 0
-while not done and iteration<10: 
+while iteration<num_iterations and not done: 
 
     newsamples = {}
     synthesis_time = 0
@@ -93,12 +112,12 @@ while not done and iteration<10:
     # Evaluator
     start = timeit.default_timer()
     print("Evaluating program against model...")
-    done, test_samples = evaluator.evaluate(sampler,program_path,samples)
+    done, test_samples = evaluator.evaluate(sampler,program_path,samples,radius,threshold)
     dump_samples(test_samples,synthesis_benchmark_path,f"test_samples_{iteration}")
 
     if not done :
         print("Refining sample set...")
-        newsamples = evaluator.refine(sampler,program_path,samples)
+        newsamples = evaluator.refine(sampler,program_path,samples,radius,rate)
         if len(newsamples.items())==0:
             done = True
         # print(samples)
