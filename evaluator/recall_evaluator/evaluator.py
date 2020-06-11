@@ -63,14 +63,13 @@ def evaluate(sampler,program_path,samples,radius,threshold):
             for item in range(len(neighbor)):
                 key.append((input_names[item],neighbor[item]))
 
-            # if not (tuple(key) in test_samples):
+            if not (tuple(key) in test_samples):
+                test_samples[tuple(key)] = newoutputs
 
-            test_samples[tuple(key)] = newoutputs
-
-            if program.execute(list(neighbor)) == f"{newoutputs[0][0]}_{newoutputs[0][1]}": # TODO this works only for classifiers 
-                newtp +=1
-            else:
-                newfn +=1
+                if program.execute(list(neighbor)) == f"{newoutputs[0][0]}_{newoutputs[0][1]}": # TODO this works only for classifiers 
+                    newtp +=1
+                else:
+                    newfn +=1
 
             # print(f"Program returns: {program.execute(list(neighbor))}\n")
             # print(f"Sampler computed:{outputs}\n")
