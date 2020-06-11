@@ -56,7 +56,7 @@ def sample(num_of_samples):
         # print(feature2_name, "_norm: ", feature2_value_norm,end =" | ")
 
         # Feature 3
-        feature3_value = random.uniform(3.0,35682.0)
+        feature3_value = random.randint(3,35682)
         print(feature3_name, ": ", feature3_value,end =" | ")
         feature3_value_norm = truncate((feature3_value - train_df_mean[feature3_name])/train_df_std[feature3_name],2)
         # print(feature3_name, "_norm: ", feature3_value_norm,end =" | ")

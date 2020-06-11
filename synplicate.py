@@ -41,7 +41,7 @@ def dump_samples(samples,path,file_name):
 
 
 # Parse arguments
-parser = argparse.ArgumentParser(description='synplicate', usage='%(prog)s [-h] [options] model_dir_path initial_num_samples radius sample_rate robustness num_iterations', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(description='synplicate', usage='%(prog)s [-h] [options] model_dir_path initial_num_samples radius sample_rate robustness max_num_iterations', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
 ## required arguments
 
@@ -50,7 +50,7 @@ parser.add_argument('initNumSamples', help='number of initial samples', type=int
 parser.add_argument('radius', help='neighborhood radius', type=int)
 parser.add_argument('sampleRate', help='refinement sample rate', type=int)
 parser.add_argument('robustness', help='epsilon', type=float)
-parser.add_argument('numIterations', help='number of refinement steps', type=int)
+parser.add_argument('maxNumIterations', help='number of refinement steps', type=int)
 
 args = parser.parse_args()
 
@@ -59,7 +59,7 @@ synthesis_benchmark_path = args.modelDirPath + "/"
 radius = args.radius
 rate = args.sampleRate
 threshold = args.robustness
-num_iterations = args.numIterations
+num_iterations = args.maxNumIterations
 
 
 # synthesis_benchmark_path = "examples/california_census_simplified/"
