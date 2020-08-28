@@ -307,6 +307,7 @@ def countSampleWithHashing(sample, epsilon=countEpsilon, confidence=perSampleCou
 	# assign maximization variables by adding unit clauses
 	os.system('cp '+onefoldFilename+' '+countFilename)
 	with open(countFilename, 'a') as countFile:
+		print("OPENING COUNT FILE HASHING")
 		for literal in sample:
 			countFile.write(str(literal)+' 0\n')
 	# count resulting formula

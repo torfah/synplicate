@@ -375,11 +375,11 @@ def extract_ind_variables(dimacs,name_list):
 
 
 
-def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs):
+def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,file_name):
 
     # create max#sat file
     os.system(f"mkdir -p {output_path}")
-    sat_file_path = output_path+"encoding.sat"
+    sat_file_path = output_path+file_name
     sat_file = open(sat_file_path,"w")
     sat_file.write("BC1.1\n")
 
@@ -408,7 +408,7 @@ def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_part
     
 
     print("Translating to maxdimacs...")
-    dimacs_file_path = output_path+"encoding.dimacs"
+    dimacs_file_path = output_path+file_name+".dimacs"
     maximization_vars = extract_max_variables(dimacs_tempfile_path)
     name_list = []
     for k,v in samples.items():

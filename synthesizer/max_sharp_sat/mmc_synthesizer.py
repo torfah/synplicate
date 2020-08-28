@@ -144,10 +144,11 @@ def synthesize_dot_code(target_path,program_egdes,program_nodes,iteration):
     return dot_file_path, png_path
 
 def synthesize_python_code(target_path,program_edges,program_nodes,input_names,iteration):
-    python_file_path = target_path+ f"program/"
-    python_file = open(python_file_path+f"program{iteration}.py","w") 
+    python_file_dir_path = target_path+ f"program/"
+    program_file_name = f"program{iteration}.py"
+    python_file = open(python_file_dir_path+program_file_name,"w") 
 
-    target_path_modified = target_path.replace("/",".").rstrip('.')
+    # target_path_modified = target_path.replace("/",".").rstrip('.')
     python_file.write("import sys\n")
     python_file.write(f"sys.path.insert(0,\"{target_path}\")\n")
     python_file.write(f"import feature_defs\n\n")
@@ -206,6 +207,8 @@ def synthesize_python_code(target_path,program_edges,program_nodes,input_names,i
 
     python_file.close()
 
+    python_file_path = python_file_dir_path+program_file_name
+
     return python_file_path
 
 def extract_program(encoding_path,witness_path,target_path,input_names,iteration):
@@ -236,12 +239,13 @@ def synthesize(benchmark_path,samples,iteration):
    
 
     # create max#sat encoding
-    encoding_path = encoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs)
+    encoding_file_name = f"encoding{iteration}"
+    encoding_path = encoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,encoding_file_name)
 
     # maximum model counting 
     print("Maximum model counting...")
-    witness_path = output_path + "witness.txt"
-    os.system(f"python3 synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
+    witness_path = output_path + f"witness{iteration}.txt"
+    os.system(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
 
     # translate witness to program: extract program from mmc witness
     # extract program signature 

@@ -1,6 +1,7 @@
 import tensorflow as tf
 from synthesizer.max_sharp_sat import mmc_synthesizer
 from evaluator.recall_evaluator import evaluator
+from evaluator.empirical_evaluator import evaluator as emp_ev
 import importlib
 import timeit
 import os
@@ -32,9 +33,6 @@ def dump_samples(samples,path,file_name):
         size = samples_file.tell()               # the size...
         samples_file.truncate(size-1) 
         samples_file.write("\n")
-
-    
-
 
 
     samples_file.close()

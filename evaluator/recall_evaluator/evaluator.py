@@ -24,7 +24,10 @@ def evaluate(sampler,program_path,samples,radius,threshold):
 
 
     # import program
-    program = importlib.import_module(f".program0",program_path.replace("/",".").rstrip('.'))
+    split_path = program_path.rsplit("/",1)
+    program_file_name = split_path[1][:-3]
+    program_file_dir = split_path[0]
+    program = importlib.import_module(f".{program_file_name}",program_file_dir.replace("/","."))
 
     tp = 0
     fn = 0
@@ -112,7 +115,10 @@ def refine(sampler,program_path, samples,radius,sample_rate):
 
     newsamples = {}
     # import program
-    program = importlib.import_module(f".program0",program_path.replace("/",".").rstrip('.'))
+    split_path = program_path.rsplit("/",1)
+    program_file_name = split_path[1][:-3]
+    program_file_dir = split_path[0]
+    program = importlib.import_module(f".{program_file_name}",program_file_dir.replace("/","."))
     
     # get input names
     input_names = []
