@@ -4,7 +4,12 @@ import os
 from synthesizer.max_sharp_sat import encoder
 
 
-
+# global variables 
+num_of_feature_nodes = 0
+feature_partition = {}
+label_partition = {}
+feature_defs = {}
+output_path = ""
 
 def configure(path):
     config_file = open(f"{path}config.mmc","r")
@@ -62,7 +67,7 @@ def extract_program_map(encoding_path,witness_path):
             print("Witness found! ",end='')
         if line.startswith("c Estimated max-count"):
             words = line.split()
-            count = words[3]+words[4]+words[5]
+            count = int(float(words[3])* (float(words[5].split('^')[0])**float(words[5].split('^')[1])))
             print("Count: ", count)
         
     if var_ids == []:
@@ -115,10 +120,10 @@ def extract_program_map(encoding_path,witness_path):
                 print(f"{node}: {feature}")
     
     witness_file.close()
-    return program_edges,program_nodes
+    return program_edges,program_nodes, count
 
-def synthesize_dot_code(target_path,program_egdes,program_nodes,iteration):
-    dot_file_path = target_path+ f"program/program{iteration}.dot"
+def synthesize_dot_code(target_path,program_egdes,program_nodes,file_name):
+    dot_file_path = target_path+ f"program/program_{file_name}.dot"
     dot_file = open(dot_file_path,"w")
 
     dot_file.write("digraph {\n")
@@ -138,14 +143,14 @@ def synthesize_dot_code(target_path,program_egdes,program_nodes,iteration):
 
     dot_file.close()
 
-    png_path = target_path + f"program/program{iteration}.png"
+    png_path = target_path + f"program/program_{file_name}.png"
 
     os.system(f"dot -Tpng {dot_file_path} -o {png_path}")
     return dot_file_path, png_path
 
-def synthesize_python_code(target_path,program_edges,program_nodes,input_names,iteration):
+def synthesize_python_code(target_path,program_edges,program_nodes,input_names,file_name):
     python_file_dir_path = target_path+ f"program/"
-    program_file_name = f"program{iteration}.py"
+    program_file_name = f"program_{file_name}.py"
     python_file = open(python_file_dir_path+program_file_name,"w") 
 
     # target_path_modified = target_path.replace("/",".").rstrip('.')
@@ -211,40 +216,63 @@ def synthesize_python_code(target_path,program_edges,program_nodes,input_names,i
 
     return python_file_path
 
-def extract_program(encoding_path,witness_path,target_path,input_names,iteration):
+def extract_program(encoding_path,witness_path,target_path,input_names,file_name):
 
     os.system(f"mkdir -p {target_path}program")
-    program_edges, program_nodes = extract_program_map(encoding_path,witness_path)
+    program_edges, program_nodes, count = extract_program_map(encoding_path,witness_path)
 
-    dot_file_path, png_path = synthesize_dot_code(target_path, program_edges, program_nodes,iteration)
-    python_file_path = synthesize_python_code(target_path,program_edges,program_nodes,input_names,iteration)
+    dot_file_path, png_path = synthesize_dot_code(target_path, program_edges, program_nodes,file_name)
+    python_file_path = synthesize_python_code(target_path,program_edges,program_nodes,input_names,file_name)
 
-    return python_file_path,dot_file_path,png_path
+    return python_file_path,dot_file_path,png_path, count
 
-def synthesize(benchmark_path,samples,iteration):
+def compute_class_size():
+    size = 0
+
+    num_of_features = len(feature_partition)
+    max_num_of_partition = 0
+    for b in feature_partition.values():
+        if b>max_num_of_partition:
+            max_num_of_partition=b
     
+    num_of_label_combinations = 1
+    for b in label_partition.values():
+        num_of_label_combinations *=b
+
+    size = num_of_feature_nodes*max_num_of_partition*(num_of_feature_nodes+num_of_label_combinations)*(num_of_features**num_of_feature_nodes)
+
+    # print(f"Class Size:{size}, number of nodes:{num_of_feature_nodes}, feature partitions: {max_num_of_partition}, labels: {num_of_label_combinations}")
+    return size
+
+def initialize(benchmark_path):
+    
+    global num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path
+
     print("Extracting synthesis configuration... ") 
     config = configure(benchmark_path) 
 
-    print(f"Synthesizing program with {config[0]:d} states, features {config[1]}, and labels {config[2]} ...")
-
-    output_path = benchmark_path+"mmc_encoding/"
-
-    
     num_of_feature_nodes = config[0]
     feature_partition = config[1]
     label_partition = config[2] 
     feature_defs = config[3]
+
+    output_path = benchmark_path+"mmc_encoding/"
+
+
+def synthesize(benchmark_path,samples,file_name):
     
-   
+    global num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path
+
+    print(f"Synthesizing program with {num_of_feature_nodes:d} states, features {feature_partition}, and labels {label_partition} using maximum model counting ...")
+
 
     # create max#sat encoding
-    encoding_file_name = f"encoding{iteration}"
+    encoding_file_name = file_name
     encoding_path = encoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,encoding_file_name)
 
     # maximum model counting 
-    print("Maximum model counting...")
-    witness_path = output_path + f"witness{iteration}.txt"
+    # print("Maximum model counting...")
+    witness_path = output_path + f"{file_name}_witness.txt"
     os.system(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
 
     # translate witness to program: extract program from mmc witness
@@ -255,9 +283,9 @@ def synthesize(benchmark_path,samples,iteration):
             input_names.append(s[i][0])
         break
     # print(input_names)
-    program_path, dot_path, png_path = extract_program(encoding_path,witness_path,benchmark_path,input_names,iteration)
+    program_path, dot_path, png_path, count  = extract_program(encoding_path,witness_path,benchmark_path,input_names,file_name)
     # os.system(f"open {png_path}")
 
     # os.system(f"python3 {program_path}")
 
-    return program_path, dot_path
+    return program_path, dot_path, count
