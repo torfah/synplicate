@@ -1,4 +1,8 @@
 import tensorflow as tf
+import importlib
+import timeit
+import os
+import argparse
 
 #import procedures
 from methods.erm import erm_procedure as erm
@@ -9,11 +13,9 @@ from synthesizer.max_sharp_sat import mmc_synthesizer
 from synthesizer.max_sat import ms_synthesizer
 from synthesizer.omt import omt_synthesizer
 from evaluator.recall_evaluator import evaluator
-# from evaluator.empirical_evaluator import evaluator as emp_ev
-import importlib
-import timeit
-import os
-import argparse
+
+
+
 
 
 # Parse arguments
