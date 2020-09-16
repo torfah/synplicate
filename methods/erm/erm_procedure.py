@@ -18,14 +18,12 @@ def execute(benchmark_path, synthesizer, delta, epsilon):
     # import sampler
     sampler = importlib.import_module(f".sampler",benchmark_path.replace("/",".").rstrip('.'))
     samples = {}
-    # Initial set of samples (S0 in paper)
-    # Input: model: model of a deep neural network.
-    #        num_of_samples: size of initial set of samples
-    # Output: samples: Map {tuple of ordered inputs -> tuple of ordered lables}
+
+    # Compute number of samples according to emprirical risk minimization 
     class_size = synthesizer.compute_class_size()
-    num_of_samples = math.ceil(math.log(1+class_size*delta)/epsilon)
+    num_of_samples = math.ceil(math.log((1+class_size)/delta)/epsilon)
     print(f"Using {num_of_samples} samples ...")
-    # random samples
+    
     samples.update(sampler.uniform(num_of_samples))
 
     # =================================================================================================
@@ -38,13 +36,12 @@ def execute(benchmark_path, synthesizer, delta, epsilon):
     # Execute synthesizer
     
     synthesis_time = 0
-    evaluation_time = 0
 
     # dump input samples
-    logger.dump_samples(samples,benchmark_path,f"samples")
+    logger.dump_samples(samples,benchmark_path,f"erm_syn_samples")
 
     start = timeit.default_timer()
-    program_path, dot_path, count = synthesizer.synthesize(benchmark_path,samples,"encoding")
+    program_path, dot_path, count = synthesizer.synthesize(benchmark_path,samples,"erm")
     print(f"Synthesized program: {program_path}\nVisualization: {dot_path}")
     stop = timeit.default_timer()
     synthesis_time = stop-start
@@ -52,4 +49,6 @@ def execute(benchmark_path, synthesizer, delta, epsilon):
 
     if count>0:
         print(f"Misclassification rate:{1-count/num_of_samples}")
+
+    return samples, program_path
         

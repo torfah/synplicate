@@ -21,7 +21,7 @@ def dump_samples(samples,path,file_name):
         size = samples_file.tell()               # the size...
         samples_file.truncate(size-1) 
 
-        samples_file.write("\n")
+        samples_file.write('\n')
         
         for inputs, outputs in samples.items():
             for name, val in inputs:
@@ -30,7 +30,7 @@ def dump_samples(samples,path,file_name):
                 samples_file.write(f"{val},")
             size = samples_file.tell()               # the size...
             samples_file.truncate(size-1) 
-            samples_file.write("\n")
+            samples_file.write('\n')
 
 
     samples_file.close()

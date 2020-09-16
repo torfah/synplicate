@@ -32,11 +32,11 @@ parser.add_argument('--sampleRate', help='refinement sample rate', type=int, def
 parser.add_argument('--robustness', help='distance between last two interpretations', type=float, default=0.01)
 parser.add_argument('--stability', help='number of iteration to determine stability', type=int,default=10)
 parser.add_argument('--steps', help='number of refinement steps', type=int, default=5)
-parser.add_argument('--confidence', help='delta value', type=float, default=0.01)
-parser.add_argument('--error_margin', help='epsilon', type=float, default=0.01)
+parser.add_argument('--confidence', help='delta value', type=float, default=0.05)
+parser.add_argument('--error_margin', help='epsilon', type=float, default=0.05)
 parser.add_argument('--threshold', help='termination threshold', type=float, default=0.05)
 parser.add_argument('--termination', help='termination condition for CeGQS procedure: threshold, steps, stability', default="ttf", choices=["ttt","ttf","tft","fft","tff","ftf","fft"])
-parser.add_argument('--refinement_size', help='refinement size', type=int, default=20)
+parser.add_argument('--refinement_size', help='refinement size', type=int, default=10)
 
 args = parser.parse_args()
 

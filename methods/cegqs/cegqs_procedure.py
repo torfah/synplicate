@@ -43,7 +43,8 @@ def execute(benchmark_path, synthesizer, delta, epsilon, init_num_of_samples, st
     # Output: samples: Map {tuple of ordered inputs -> tuple of ordered lables}
     print(f"Sampling initial {init_num_of_samples} samples ...")
     # random samples
-    samples.update(sampler.sample(init_num_of_samples))
+    samples.update(sampler.uniform(init_num_of_samples))
+
 
     # =================================================================================================
     # =================================================================================================
@@ -76,23 +77,36 @@ def execute(benchmark_path, synthesizer, delta, epsilon, init_num_of_samples, st
         newsamples = {}
         synthesis_time = 0
         evaluation_time = 0
+        best_program = 0
 
         # dump input samples
-        logger.dump_samples(samples,benchmark_path,f"samples_{steps}")
+        logger.dump_samples(samples,benchmark_path,f"cegqs_syn_samples_{steps}")
 
         # Synthesize
         print("---------------------------------------------")
         start = timeit.default_timer()
-        program_path, dot_path, count = synthesizer.synthesize(benchmark_path,samples,f"encoding_{steps}")
-        print(f"Synthesized program: {program_path}\nVisualization: {dot_path}")
+        print(f"Synthesizing using {num_of_samples} samples ...")
+        program_path_new, dot_path, count = synthesizer.synthesize(benchmark_path,samples,f"cegqs_{steps}")
+        print(f"Synthesized program: {program_path_new}\nVisualization: {dot_path}")
         stop = timeit.default_timer()
         synthesis_time = stop-start
         print(f"Synthesis time:{synthesis_time}")
 
         # Evaluate and refine
         start = timeit.default_timer()
-        print("Evaluating program against model...")
-        refinement, misclassification_rate = cochran.evaluate(sampler,program_path,samples,delta,epsilon, refinement_size)
+        print(f"Evaluating program {program_path_new} against model...")
+        refinement, misclassification_rate_new = cochran.evaluate(sampler,benchmark_path,program_path_new,samples,delta,epsilon,refinement_size, f"cegqs_eval_samples_{steps}")
+
+        if (misclassification_rate_new < misclassification_rate):
+            misclassification_rate = misclassification_rate_new
+            program_path = program_path_new
+            best_program = steps
+            print(f"New program with misclassification rate: {misclassification_rate}")
+        else:
+            print(f"No improvement in misclassification rate ({misclassification_rate_new}). Kept previous program with misclassifcation rate: {misclassification_rate}")
+            refinement = cochran.refine(sampler,program_path,samples,500,refinement_size)
+            
+
 
         samples.update(refinement)
         num_of_samples = len(samples)
@@ -109,20 +123,17 @@ def execute(benchmark_path, synthesizer, delta, epsilon, init_num_of_samples, st
         global_synthesis_time += synthesis_time
         global_evaluation_time += evaluation_time
 
-        print("---------------------------------------------")
-
-
-        if count>0:
-            print(f"Misclassification rate: {misclassification_rate}")
         
         print("*********************************************")
     
 
     print("================================================")
-    print(f"Synthesis complete after {steps} refinement steps!")
+    print(f"Synthesis complete after {steps} refinement steps! Found program of misclassification rate: {misclassification_rate} with confidence {1-delta} and error {epsilon}. Program was saved as: {program_path}")
     print(f"Total time: {global_evaluation_time+global_synthesis_time}")
     print("================================================")
     print("================================================")
+
+    return program_path, best_program
 
     # =================================================================================================
     # =================================================================================================
