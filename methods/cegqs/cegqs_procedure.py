@@ -15,7 +15,7 @@ from utils import logger
 import timeit
 
 
-def execute(benchmark_path, synthesizer, delta, epsilon, init_num_of_samples, step_bound, termination_threshold, stability_factor, terminiation_condition, refinement_size):
+def execute(benchmark_path, synthesizer, delta, epsilon, init_num_of_samples, step_bound, termination_threshold, stability_factor, terminiation_condition, refinement_size,name):
     print("Executing CeGQS procedure...")
     # Determine number of samples based on the values of delta and epsilon 
     synthesizer.initialize(benchmark_path)
@@ -86,7 +86,7 @@ def execute(benchmark_path, synthesizer, delta, epsilon, init_num_of_samples, st
         print("---------------------------------------------")
         start = timeit.default_timer()
         print(f"Synthesizing using {num_of_samples} samples ...")
-        program_path_new, dot_path, count = synthesizer.synthesize(benchmark_path,samples,f"cegqs_{steps}")
+        program_path_new, dot_path, count = synthesizer.synthesize(benchmark_path,samples,f"{name}_cegqs_{steps}")
         print(f"Synthesized program: {program_path_new}\nVisualization: {dot_path}")
         stop = timeit.default_timer()
         synthesis_time = stop-start
@@ -95,7 +95,7 @@ def execute(benchmark_path, synthesizer, delta, epsilon, init_num_of_samples, st
         # Evaluate and refine
         start = timeit.default_timer()
         print(f"Evaluating program {program_path_new} against model...")
-        refinement, misclassification_rate_new = cochran.evaluate(sampler,benchmark_path,program_path_new,samples,delta,epsilon,refinement_size, f"cegqs_eval_samples_{steps}")
+        refinement, misclassification_rate_new = cochran.evaluate(sampler,benchmark_path,program_path_new,samples,delta,epsilon,refinement_size, f"{name}_cegqs_eval_samples_{steps}")
 
         if (misclassification_rate_new < misclassification_rate):
             misclassification_rate = misclassification_rate_new
@@ -110,7 +110,7 @@ def execute(benchmark_path, synthesizer, delta, epsilon, init_num_of_samples, st
 
         samples.update(refinement)
         num_of_samples = len(samples)
-        logger.dump_samples(refinement,benchmark_path,f"newsamples_{steps}")
+        logger.dump_samples(refinement,benchmark_path,f"{name}_newsamples_{steps}")
 
         stop = timeit.default_timer()
         evaluation_time = stop-start

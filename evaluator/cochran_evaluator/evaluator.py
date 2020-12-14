@@ -85,10 +85,14 @@ def evaluate(sampler,benchmark_path,program_path,samples,delta, epsilon, refinem
         # Get outputs
         outputs =  list(s.values())[0]
         
-        if program.execute(inputs) != f"{outputs[0][0]}_{outputs[0][1]}": #  TODO this works only for classifiers
-            ce_count +=1
-            if ce_count<refinement_size:
-                refinement.update(s)
+        try:
+            if program.execute(inputs) != f"{outputs[0][0]}_{outputs[0][1]}": #  TODO this works only for classifiers
+                ce_count +=1
+                if ce_count<refinement_size:
+                    refinement.update(s)
+        except:
+            ce_count = 0
+            break
                 
         
     
@@ -150,6 +154,9 @@ def just_evaluate(sampler,benchmark_path,erm_program_path,erm_mmc_program_path, 
     erm_mmc_ce_count = 0
     cegqs_mmc_ce_count = 0
 
+    dont_enter_again = False
+    dont_enter_again_cegqs = False
+
     # Sample num of samples many samples and evaluate program
     for i in tqdm.tqdm(range(num_of_samples)):
         
@@ -169,12 +176,22 @@ def just_evaluate(sampler,benchmark_path,erm_program_path,erm_mmc_program_path, 
         if cegqs_program.execute(inputs) != f"{outputs[0][0]}_{outputs[0][1]}": #  TODO this works only for classifiers
             cegqs_ce_count +=1    
 
-        if erm_mmc_program.execute(inputs) != f"{outputs[0][0]}_{outputs[0][1]}": #  TODO this works only for classifiers
-            erm_mmc_ce_count +=1
+        try:
+            if not dont_enter_again:
+                if erm_mmc_program.execute(inputs) != f"{outputs[0][0]}_{outputs[0][1]}": #  TODO this works only for classifiers
+                    erm_mmc_ce_count +=1
+        except:
+            dont_enter_again = True
+            erm_mmc_ce_count =  0
 
-        if cegqs_mmc_program.execute(inputs) != f"{outputs[0][0]}_{outputs[0][1]}": #  TODO this works only for classifiers
-            cegqs_mmc_ce_count +=1    
-                
+        try:
+            if not dont_enter_again_cegqs:
+                if cegqs_mmc_program.execute(inputs) != f"{outputs[0][0]}_{outputs[0][1]}": #  TODO this works only for classifiers
+                    cegqs_mmc_ce_count +=1    
+        except:
+            dont_enter_again_cegqs = True
+            cegqs_mmc_ce_count = 0
+                        
         
     
     erm_misclassification_rate = erm_ce_count/num_of_samples

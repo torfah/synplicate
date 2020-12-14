@@ -7,7 +7,7 @@ import timeit
 
 
 
-def execute(benchmark_path, synthesizer, delta, epsilon):
+def execute(benchmark_path, synthesizer, delta, epsilon,name):
     print("Executing ERM procedure...")
     # determine number of samples based on the values of delta and epsilon 
     synthesizer.initialize(benchmark_path)
@@ -41,7 +41,7 @@ def execute(benchmark_path, synthesizer, delta, epsilon):
     logger.dump_samples(samples,benchmark_path,f"erm_syn_samples")
 
     start = timeit.default_timer()
-    program_path, dot_path, count = synthesizer.synthesize(benchmark_path,samples,"erm")
+    program_path, dot_path, count = synthesizer.synthesize(benchmark_path,samples,f"{name}_erm")
     print(f"Synthesized program: {program_path}\nVisualization: {dot_path}")
     stop = timeit.default_timer()
     synthesis_time = stop-start
