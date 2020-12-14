@@ -1,0 +1,183 @@
+BC1.1
+phi_Gamma := T; 
+
+
+
+phi_T_feature_det :=
+T &
+(F | (lam_0_age & !lam_0_monthly_income & !lam_0_dependents & !lam_0_credit_score) | (lam_0_monthly_income & !lam_0_age & !lam_0_dependents & !lam_0_credit_score) | (lam_0_dependents & !lam_0_age & !lam_0_monthly_income & !lam_0_credit_score) | (lam_0_credit_score & !lam_0_age & !lam_0_monthly_income & !lam_0_dependents));
+
+phi_T_transitions := 
+T & 
+(lam_0_age =>
+          (T &
+          (F | (T & (F | (tau_0_0_approved_0 & (T & !tau_0_0_approved_1)) | (tau_0_0_approved_1 & (T & !tau_0_0_approved_0))))) &
+          (F | (T & (F | (tau_0_1_approved_0 & (T & !tau_0_1_approved_1)) | (tau_0_1_approved_1 & (T & !tau_0_1_approved_0))))) &
+          (F | (T & (F | (tau_0_2_approved_0 & (T & !tau_0_2_approved_1)) | (tau_0_2_approved_1 & (T & !tau_0_2_approved_0))))) &
+          (F | (T & (F | (tau_0_3_approved_0 & (T & !tau_0_3_approved_1)) | (tau_0_3_approved_1 & (T & !tau_0_3_approved_0))))))) & 
+(lam_0_monthly_income =>
+          (T &
+          (F | (T & (F | (tau_0_0_approved_0 & (T & !tau_0_0_approved_1)) | (tau_0_0_approved_1 & (T & !tau_0_0_approved_0))))) &
+          (F | (T & (F | (tau_0_1_approved_0 & (T & !tau_0_1_approved_1)) | (tau_0_1_approved_1 & (T & !tau_0_1_approved_0))))))) & 
+(lam_0_dependents =>
+          (T &
+          (F | (T & (F | (tau_0_0_approved_0 & (T & !tau_0_0_approved_1)) | (tau_0_0_approved_1 & (T & !tau_0_0_approved_0))))) &
+          (F | (T & (F | (tau_0_1_approved_0 & (T & !tau_0_1_approved_1)) | (tau_0_1_approved_1 & (T & !tau_0_1_approved_0))))))) & 
+(lam_0_credit_score =>
+          (T &
+          (F | (T & (F | (tau_0_0_approved_0 & (T & !tau_0_0_approved_1)) | (tau_0_0_approved_1 & (T & !tau_0_0_approved_0))))) &
+          (F | (T & (F | (tau_0_1_approved_0 & (T & !tau_0_1_approved_1)) | (tau_0_1_approved_1 & (T & !tau_0_1_approved_0))))) &
+          (F | (T & (F | (tau_0_2_approved_0 & (T & !tau_0_2_approved_1)) | (tau_0_2_approved_1 & (T & !tau_0_2_approved_0)))))));
+
+phi_T_transitions_consistency :=
+T &
+(lam_0_age => (T)) &
+(lam_0_monthly_income => (T & !tau_0_2_approved_0 & !tau_0_2_approved_1 & !tau_0_3_approved_0 & !tau_0_3_approved_1)) &
+(lam_0_dependents => (T & !tau_0_2_approved_0 & !tau_0_2_approved_1 & !tau_0_3_approved_0 & !tau_0_3_approved_1)) &
+(lam_0_credit_score => (T & !tau_0_3_approved_0 & !tau_0_3_approved_1));
+
+phi_T := phi_T_feature_det & phi_T_transitions & phi_T_transitions_consistency;
+
+phi_sim_leaves :=
+T &
+(alp_approved_0_0 == (F | (T & approved_P0))) &
+(alp_approved_1_0 == (F)) &
+(alp_approved_0_1 == (F | (T & approved_P0))) &
+(alp_approved_1_1 == (F)) &
+(alp_approved_0_2 == (F | (T & approved_P0))) &
+(alp_approved_1_2 == (F)) &
+(alp_approved_0_3 == (F | (T & approved_P0))) &
+(alp_approved_1_3 == (F)) &
+(alp_approved_0_4 == (F | (T & approved_P0))) &
+(alp_approved_1_4 == (F)) &
+(alp_approved_0_5 == (F)) &
+(alp_approved_1_5 == (F | (T & approved_P100))) &
+(alp_approved_0_6 == (F | (T & approved_P0))) &
+(alp_approved_1_6 == (F)) &
+(alp_approved_0_7 == (F | (T & approved_P0))) &
+(alp_approved_1_7 == (F)) &
+(alp_approved_0_8 == (F)) &
+(alp_approved_1_8 == (F | (T & approved_P100))) &
+(alp_approved_0_9 == (F | (T & approved_P0))) &
+(alp_approved_1_9 == (F)) &
+(alp_approved_0_10 == (F | (T & approved_P0))) &
+(alp_approved_1_10 == (F)) &
+(alp_approved_0_11 == (F)) &
+(alp_approved_1_11 == (F | (T & approved_P100))) &
+(alp_approved_0_12 == (F | (T & approved_P0))) &
+(alp_approved_1_12 == (F)) &
+(alp_approved_0_13 == (F)) &
+(alp_approved_1_13 == (F | (T & approved_P100))) &
+(alp_approved_0_14 == (F)) &
+(alp_approved_1_14 == (F | (T & approved_P100))) &
+(alp_approved_0_15 == (F | (T & approved_P0))) &
+(alp_approved_1_15 == (F)) &
+(alp_approved_0_16 == (F | (T & approved_P0))) &
+(alp_approved_1_16 == (F)) &
+(alp_approved_0_17 == (F | (T & approved_P0))) &
+(alp_approved_1_17 == (F)) &
+(alp_approved_0_18 == (F)) &
+(alp_approved_1_18 == (F | (T & approved_P100)));
+
+phi_sim_transition :=
+T &
+(pi_0_0 == (F | 
+         (lam_0_age & (F | (T & (tau_0_2_approved_0 => alp_approved_0_0) & (tau_0_2_approved_1 => alp_approved_1_0)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_0) & (tau_0_0_approved_1 => alp_approved_1_0)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_0) & (tau_0_1_approved_1 => alp_approved_1_0)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_0_approved_0 => alp_approved_0_0) & (tau_0_0_approved_1 => alp_approved_1_0)))))) &
+(pi_0_1 == (F | 
+         (lam_0_age & (F | (T & (tau_0_3_approved_0 => alp_approved_0_1) & (tau_0_3_approved_1 => alp_approved_1_1)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_1) & (tau_0_0_approved_1 => alp_approved_1_1)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_0_approved_0 => alp_approved_0_1) & (tau_0_0_approved_1 => alp_approved_1_1)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_2_approved_0 => alp_approved_0_1) & (tau_0_2_approved_1 => alp_approved_1_1)))))) &
+(pi_0_2 == (F | 
+         (lam_0_age & (F | (T & (tau_0_1_approved_0 => alp_approved_0_2) & (tau_0_1_approved_1 => alp_approved_1_2)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_2) & (tau_0_0_approved_1 => alp_approved_1_2)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_2) & (tau_0_1_approved_1 => alp_approved_1_2)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_2_approved_0 => alp_approved_0_2) & (tau_0_2_approved_1 => alp_approved_1_2)))))) &
+(pi_0_3 == (F | 
+         (lam_0_age & (F | (T & (tau_0_1_approved_0 => alp_approved_0_3) & (tau_0_1_approved_1 => alp_approved_1_3)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_3) & (tau_0_0_approved_1 => alp_approved_1_3)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_0_approved_0 => alp_approved_0_3) & (tau_0_0_approved_1 => alp_approved_1_3)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_1_approved_0 => alp_approved_0_3) & (tau_0_1_approved_1 => alp_approved_1_3)))))) &
+(pi_0_4 == (F | 
+         (lam_0_age & (F | (T & (tau_0_0_approved_0 => alp_approved_0_4) & (tau_0_0_approved_1 => alp_approved_1_4)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_4) & (tau_0_0_approved_1 => alp_approved_1_4)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_4) & (tau_0_1_approved_1 => alp_approved_1_4)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_1_approved_0 => alp_approved_0_4) & (tau_0_1_approved_1 => alp_approved_1_4)))))) &
+(pi_0_5 == (F | 
+         (lam_0_age & (F | (T & (tau_0_3_approved_0 => alp_approved_0_5) & (tau_0_3_approved_1 => alp_approved_1_5)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_1_approved_0 => alp_approved_0_5) & (tau_0_1_approved_1 => alp_approved_1_5)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_0_approved_0 => alp_approved_0_5) & (tau_0_0_approved_1 => alp_approved_1_5)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_1_approved_0 => alp_approved_0_5) & (tau_0_1_approved_1 => alp_approved_1_5)))))) &
+(pi_0_6 == (F | 
+         (lam_0_age & (F | (T & (tau_0_0_approved_0 => alp_approved_0_6) & (tau_0_0_approved_1 => alp_approved_1_6)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_1_approved_0 => alp_approved_0_6) & (tau_0_1_approved_1 => alp_approved_1_6)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_6) & (tau_0_1_approved_1 => alp_approved_1_6)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_0_approved_0 => alp_approved_0_6) & (tau_0_0_approved_1 => alp_approved_1_6)))))) &
+(pi_0_7 == (F | 
+         (lam_0_age & (F | (T & (tau_0_2_approved_0 => alp_approved_0_7) & (tau_0_2_approved_1 => alp_approved_1_7)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_7) & (tau_0_0_approved_1 => alp_approved_1_7)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_7) & (tau_0_1_approved_1 => alp_approved_1_7)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_0_approved_0 => alp_approved_0_7) & (tau_0_0_approved_1 => alp_approved_1_7)))))) &
+(pi_0_8 == (F | 
+         (lam_0_age & (F | (T & (tau_0_3_approved_0 => alp_approved_0_8) & (tau_0_3_approved_1 => alp_approved_1_8)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_1_approved_0 => alp_approved_0_8) & (tau_0_1_approved_1 => alp_approved_1_8)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_8) & (tau_0_1_approved_1 => alp_approved_1_8)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_0_approved_0 => alp_approved_0_8) & (tau_0_0_approved_1 => alp_approved_1_8)))))) &
+(pi_0_9 == (F | 
+         (lam_0_age & (F | (T & (tau_0_0_approved_0 => alp_approved_0_9) & (tau_0_0_approved_1 => alp_approved_1_9)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_9) & (tau_0_0_approved_1 => alp_approved_1_9)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_9) & (tau_0_1_approved_1 => alp_approved_1_9)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_2_approved_0 => alp_approved_0_9) & (tau_0_2_approved_1 => alp_approved_1_9)))))) &
+(pi_0_10 == (F | 
+         (lam_0_age & (F | (T & (tau_0_3_approved_0 => alp_approved_0_10) & (tau_0_3_approved_1 => alp_approved_1_10)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_10) & (tau_0_0_approved_1 => alp_approved_1_10)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_10) & (tau_0_1_approved_1 => alp_approved_1_10)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_2_approved_0 => alp_approved_0_10) & (tau_0_2_approved_1 => alp_approved_1_10)))))) &
+(pi_0_11 == (F | 
+         (lam_0_age & (F | (T & (tau_0_1_approved_0 => alp_approved_0_11) & (tau_0_1_approved_1 => alp_approved_1_11)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_1_approved_0 => alp_approved_0_11) & (tau_0_1_approved_1 => alp_approved_1_11)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_0_approved_0 => alp_approved_0_11) & (tau_0_0_approved_1 => alp_approved_1_11)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_1_approved_0 => alp_approved_0_11) & (tau_0_1_approved_1 => alp_approved_1_11)))))) &
+(pi_0_12 == (F | 
+         (lam_0_age & (F | (T & (tau_0_3_approved_0 => alp_approved_0_12) & (tau_0_3_approved_1 => alp_approved_1_12)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_12) & (tau_0_0_approved_1 => alp_approved_1_12)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_12) & (tau_0_1_approved_1 => alp_approved_1_12)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_0_approved_0 => alp_approved_0_12) & (tau_0_0_approved_1 => alp_approved_1_12)))))) &
+(pi_0_13 == (F | 
+         (lam_0_age & (F | (T & (tau_0_2_approved_0 => alp_approved_0_13) & (tau_0_2_approved_1 => alp_approved_1_13)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_1_approved_0 => alp_approved_0_13) & (tau_0_1_approved_1 => alp_approved_1_13)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_13) & (tau_0_1_approved_1 => alp_approved_1_13)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_2_approved_0 => alp_approved_0_13) & (tau_0_2_approved_1 => alp_approved_1_13)))))) &
+(pi_0_14 == (F | 
+         (lam_0_age & (F | (T & (tau_0_1_approved_0 => alp_approved_0_14) & (tau_0_1_approved_1 => alp_approved_1_14)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_1_approved_0 => alp_approved_0_14) & (tau_0_1_approved_1 => alp_approved_1_14)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_0_approved_0 => alp_approved_0_14) & (tau_0_0_approved_1 => alp_approved_1_14)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_1_approved_0 => alp_approved_0_14) & (tau_0_1_approved_1 => alp_approved_1_14)))))) &
+(pi_0_15 == (F | 
+         (lam_0_age & (F | (T & (tau_0_3_approved_0 => alp_approved_0_15) & (tau_0_3_approved_1 => alp_approved_1_15)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_15) & (tau_0_0_approved_1 => alp_approved_1_15)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_0_approved_0 => alp_approved_0_15) & (tau_0_0_approved_1 => alp_approved_1_15)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_2_approved_0 => alp_approved_0_15) & (tau_0_2_approved_1 => alp_approved_1_15)))))) &
+(pi_0_16 == (F | 
+         (lam_0_age & (F | (T & (tau_0_3_approved_0 => alp_approved_0_16) & (tau_0_3_approved_1 => alp_approved_1_16)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_16) & (tau_0_0_approved_1 => alp_approved_1_16)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_0_approved_0 => alp_approved_0_16) & (tau_0_0_approved_1 => alp_approved_1_16)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_1_approved_0 => alp_approved_0_16) & (tau_0_1_approved_1 => alp_approved_1_16)))))) &
+(pi_0_17 == (F | 
+         (lam_0_age & (F | (T & (tau_0_3_approved_0 => alp_approved_0_17) & (tau_0_3_approved_1 => alp_approved_1_17)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_0_approved_0 => alp_approved_0_17) & (tau_0_0_approved_1 => alp_approved_1_17)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_17) & (tau_0_1_approved_1 => alp_approved_1_17)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_1_approved_0 => alp_approved_0_17) & (tau_0_1_approved_1 => alp_approved_1_17)))))) &
+(pi_0_18 == (F | 
+         (lam_0_age & (F | (T & (tau_0_2_approved_0 => alp_approved_0_18) & (tau_0_2_approved_1 => alp_approved_1_18)))) | 
+         (lam_0_monthly_income & (F | (T & (tau_0_1_approved_0 => alp_approved_0_18) & (tau_0_1_approved_1 => alp_approved_1_18)))) | 
+         (lam_0_dependents & (F | (T & (tau_0_1_approved_0 => alp_approved_0_18) & (tau_0_1_approved_1 => alp_approved_1_18)))) | 
+         (lam_0_credit_score & (F | (T & (tau_0_2_approved_0 => alp_approved_0_18) & (tau_0_2_approved_1 => alp_approved_1_18))))));
+
+phi_sim := pi_0_0 & pi_0_1 & pi_0_2 & pi_0_3 & pi_0_4 & pi_0_5 & pi_0_6 & pi_0_7 & pi_0_8 & pi_0_9 & pi_0_10 & pi_0_11 & pi_0_12 & pi_0_13 & pi_0_14 & pi_0_15 & pi_0_16 & pi_0_17 & pi_0_18 &  phi_sim_leaves & phi_sim_transition;
+
+FORMULA := phi_Gamma & phi_T & phi_sim;
+ASSIGN FORMULA;

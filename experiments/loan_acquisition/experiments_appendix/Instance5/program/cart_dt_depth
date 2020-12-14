@@ -1,0 +1,28 @@
+digraph Tree {
+node [shape=box] ;
+0 [label="monthly_income <= 6255.175\ngini = 0.464\nsamples = 924\nvalue = [586, 338]\nclass = 0"] ;
+1 [label="age <= 65.5\ngini = 0.171\nsamples = 549\nvalue = [497, 52]\nclass = 0"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label="monthly_income <= 5934.875\ngini = 0.028\nsamples = 423\nvalue = [417, 6]\nclass = 0"] ;
+1 -> 2 ;
+3 [label="gini = 0.0\nsamples = 392\nvalue = [392, 0]\nclass = 0"] ;
+2 -> 3 ;
+4 [label="gini = 0.312\nsamples = 31\nvalue = [25, 6]\nclass = 0"] ;
+2 -> 4 ;
+5 [label="monthly_income <= 4915.375\ngini = 0.464\nsamples = 126\nvalue = [80, 46]\nclass = 0"] ;
+1 -> 5 ;
+6 [label="gini = 0.206\nsamples = 86\nvalue = [76, 10]\nclass = 0"] ;
+5 -> 6 ;
+7 [label="gini = 0.18\nsamples = 40\nvalue = [4, 36]\nclass = 1"] ;
+5 -> 7 ;
+8 [label="age <= 33.5\ngini = 0.362\nsamples = 375\nvalue = [89, 286]\nclass = 1"] ;
+0 -> 8 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+9 [label="gini = 0.0\nsamples = 84\nvalue = [84, 0]\nclass = 0"] ;
+8 -> 9 ;
+10 [label="age <= 34.5\ngini = 0.034\nsamples = 291\nvalue = [5, 286]\nclass = 1"] ;
+8 -> 10 ;
+11 [label="gini = 0.48\nsamples = 5\nvalue = [2, 3]\nclass = 1"] ;
+10 -> 11 ;
+12 [label="gini = 0.021\nsamples = 286\nvalue = [3, 283]\nclass = 1"] ;
+10 -> 12 ;
+}

@@ -1,0 +1,58 @@
+c Using random seed 0, runIndex 0
+c Parsing formula...
+c Formula has 48 maximization and 473 counting variables
+c Generating 20 independent samples from 1-fold self-composition
+c Sampling with tolerance (1+16.002195)... completed in 577 s
+c Obtained 20 distinct assignments to maximization variables
+c Using 2000 Monte Carlo samples, enumeration threshold 256
+c Using density confidence 0.995, granularity 0.0363948
+c Using hashing tolerance (1+1) and confidence 0.99
+c Counting witness 1 with Monte Carlo... 0.000 x 2^473
+c Counting witness 1 with enumeration... 1.812 x 2^6
+c Counting witness 2 with Monte Carlo... 0.000 x 2^473
+c Counting witness 2 with enumeration... 1.148 x 2^7
+c Counting witness 3 with Monte Carlo... 0.000 x 2^473
+c Counting witness 3 with enumeration... 1.531 x 2^6
+c Counting witness 4 with Monte Carlo... 0.000 x 2^473
+c Counting witness 4 with enumeration... 1.312 x 2^6
+c Counting witness 5 with Monte Carlo... 0.000 x 2^473
+c Counting witness 5 with enumeration... 1.531 x 2^6
+c Counting witness 6 with Monte Carlo... 0.000 x 2^473
+c Counting witness 6 with enumeration... 1.078 x 2^7
+c Counting witness 7 with Monte Carlo... 0.000 x 2^473
+c Counting witness 7 with enumeration... 1.547 x 2^6
+c Counting witness 8 with Monte Carlo... 0.000 x 2^473
+c Counting witness 8 with enumeration... 1.844 x 2^6
+c Counting witness 9 with Monte Carlo... 0.000 x 2^473
+c Counting witness 9 with enumeration... 1.094 x 2^7
+c Counting witness 10 with Monte Carlo... 0.000 x 2^473
+c Counting witness 10 with enumeration... 1.938 x 2^6
+c Counting witness 11 with Monte Carlo... 0.000 x 2^473
+c Counting witness 11 with enumeration... 1.797 x 2^6
+c Counting witness 12 with Monte Carlo... 0.000 x 2^473
+c Counting witness 12 with enumeration... 1.359 x 2^6
+c Counting witness 13 with Monte Carlo... 0.000 x 2^473
+c Counting witness 13 with enumeration... 1.055 x 2^7
+c Counting witness 14 with Monte Carlo... 0.000 x 2^473
+c Counting witness 14 with enumeration... 1.922 x 2^6
+c Counting witness 15 with Monte Carlo... 0.000 x 2^473
+c Counting witness 15 with enumeration... 1.906 x 2^6
+c Counting witness 16 with Monte Carlo... 0.000 x 2^473
+c Counting witness 16 with enumeration... 1.039 x 2^7
+c Counting witness 17 with Monte Carlo... 0.000 x 2^473
+c Counting witness 17 with enumeration... 1.719 x 2^6
+c Counting witness 18 with Monte Carlo... 0.000 x 2^473
+c Counting witness 18 with enumeration... 1.062 x 2^7
+c Counting witness 19 with Monte Carlo... 0.000 x 2^473
+c Counting witness 19 with enumeration... 1.312 x 2^6
+c Counting witness 20 with Monte Carlo... 0.000 x 2^473
+c Counting witness 20 with enumeration... 1.875 x 2^6
+c Counting completed in 76 s
+c Witness with largest estimated count:
+v -1770 -1771 1772 -1773 -1774 1775 -1776 1777 -1815 -1816 -1817 -1818 -1819 1820 1821 -1822 -1823 1824 -1825 -1826 1889 -1891 -1892 -1893 -1894 1895 -1896 -1897 -1898 1899 -1900 -1901 -1902 1903 -1904 -1905 1919 -1921 -1923 -1924 1938 -1940 -1942 -1943 -1957 -1959 -1961 1962 0
+c Estimated count for this witness is exact
+c Witness quality (exact count / max-count) >= 1.11348e-15 with probability >= 0.6
+c Estimated max-count: 1.14844 x 2^7
+c Max-count is <= 1.83213 x 2^56 with probability >= 0.6
+c Max-count is >= 1.14844 x 2^7 with probability >= 1
+c Total runtime 655 s

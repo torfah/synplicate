@@ -1,0 +1,29 @@
+digraph {
+node [label=Class_1,style=""] Class_1
+node [label=Class_1,style=""] Class_1
+node [label=Class_1,style=""] Class_1
+node [label=Class_0,style=""] Class_0
+node [label=Class_0,style=""] Class_0
+node [label=Class_2,style=""] Class_2
+node [label=Class_1,style=""] Class_1
+node [label=Class_3,style=""] Class_3
+node [label=Class_1,style=""] Class_1
+node [label=population,shape="diamond",style=""] 4
+node [label=median_income,shape="diamond",style=""] 3
+node [label=median_income,shape="diamond",style=""] 2
+node [label=median_income,shape="diamond",style=""] 1
+node [label=median_income,shape="diamond",style=""] 0
+
+4 -> Class_1 [label="3"]
+4 -> Class_1 [label="2"]
+4 -> Class_1 [label="1"]
+4 -> Class_0 [label="0"]
+3 -> Class_0 [label="1"]
+3 -> Class_2 [label="0"]
+2 -> Class_1 [label="1"]
+2 -> 3 [label="0"]
+1 -> 4 [label="1"]
+1 -> Class_3 [label="0"]
+0 -> 1 [label="1"]
+0 -> Class_1 [label="0"]
+}

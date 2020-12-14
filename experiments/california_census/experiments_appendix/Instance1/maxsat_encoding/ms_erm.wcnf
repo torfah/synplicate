@@ -1,0 +1,1118 @@
+c This is a CNF SAT formula in the DIMACS CNF format,
+c produced with the bc2cnf translator by Tommi Junttila;
+c see http://users.ics.aalto.fi/tjunttil/circuits/index.html
+c phi_Gamma <-> 1
+c phi_T_transitions <-> 1
+c phi_T <-> 1
+c phi_sim_leaves <-> 1
+c phi_sim_transition <-> 1
+c phi_sim <-> 1
+c FORMULA <-> 1
+c pi_0_0 <-> 2
+c pi_0_3 <-> 2
+c pi_0_18 <-> 2
+c pi_0_32 <-> 2
+c pi_0_42 <-> 2
+c pi_0_66 <-> 2
+c pi_0_89 <-> 2
+c pi_0_90 <-> 2
+c pi_0_102 <-> 2
+c pi_0_134 <-> 2
+c pi_0_4 <-> 13
+c pi_0_5 <-> 13
+c pi_0_9 <-> 13
+c pi_0_43 <-> 13
+c pi_0_44 <-> 13
+c pi_0_49 <-> 13
+c pi_0_52 <-> 13
+c pi_0_58 <-> 13
+c pi_0_61 <-> 13
+c pi_0_74 <-> 13
+c pi_0_85 <-> 13
+c pi_0_88 <-> 13
+c pi_0_110 <-> 13
+c pi_0_116 <-> 13
+c pi_0_120 <-> 13
+c pi_0_122 <-> 13
+c pi_0_126 <-> 13
+c pi_0_127 <-> 13
+c pi_0_133 <-> 13
+c pi_0_20 <-> 24
+c pi_0_26 <-> 24
+c pi_0_45 <-> 24
+c pi_0_47 <-> 24
+c pi_0_56 <-> 24
+c pi_0_65 <-> 24
+c pi_0_72 <-> 24
+c pi_0_76 <-> 24
+c pi_0_86 <-> 24
+c pi_0_87 <-> 24
+c pi_0_91 <-> 24
+c pi_0_93 <-> 24
+c pi_0_99 <-> 24
+c pi_0_101 <-> 24
+c pi_0_107 <-> 24
+c pi_0_114 <-> 24
+c pi_0_124 <-> 24
+c pi_0_128 <-> 24
+c pi_0_132 <-> 24
+c pi_0_1 <-> 31
+c pi_0_7 <-> 31
+c pi_0_13 <-> 31
+c pi_0_27 <-> 31
+c pi_0_31 <-> 31
+c pi_0_55 <-> 31
+c pi_0_67 <-> 31
+c pi_0_109 <-> 31
+c pi_0_131 <-> 31
+c pi_0_12 <-> 42
+c pi_0_22 <-> 42
+c pi_0_25 <-> 42
+c pi_0_71 <-> 42
+c pi_0_129 <-> 42
+c pi_0_130 <-> 42
+c pi_0_2 <-> 48
+c pi_0_75 <-> 48
+c pi_0_92 <-> 48
+c pi_0_98 <-> 48
+c pi_0_125 <-> 48
+c pi_0_14 <-> 55
+c pi_0_19 <-> 55
+c pi_0_29 <-> 55
+c pi_0_30 <-> 55
+c pi_0_33 <-> 55
+c pi_0_34 <-> 55
+c pi_0_36 <-> 55
+c pi_0_40 <-> 55
+c pi_0_41 <-> 55
+c pi_0_50 <-> 55
+c pi_0_51 <-> 55
+c pi_0_73 <-> 55
+c pi_0_80 <-> 55
+c pi_0_82 <-> 55
+c pi_0_83 <-> 55
+c pi_0_97 <-> 55
+c pi_0_103 <-> 55
+c pi_0_108 <-> 55
+c pi_0_111 <-> 55
+c pi_0_113 <-> 55
+c pi_0_117 <-> 55
+c pi_0_119 <-> 55
+c pi_0_123 <-> 55
+c pi_0_16 <-> 56
+c pi_0_35 <-> 56
+c pi_0_37 <-> 56
+c pi_0_38 <-> 56
+c pi_0_46 <-> 56
+c pi_0_48 <-> 56
+c pi_0_59 <-> 56
+c pi_0_63 <-> 56
+c pi_0_64 <-> 56
+c pi_0_79 <-> 56
+c pi_0_94 <-> 56
+c pi_0_95 <-> 56
+c pi_0_106 <-> 56
+c pi_0_115 <-> 56
+c pi_0_118 <-> 56
+c pi_0_121 <-> 56
+c pi_0_10 <-> 57
+c pi_0_11 <-> 57
+c pi_0_17 <-> 57
+c pi_0_21 <-> 57
+c pi_0_23 <-> 57
+c pi_0_24 <-> 57
+c pi_0_28 <-> 57
+c pi_0_39 <-> 57
+c pi_0_69 <-> 57
+c pi_0_70 <-> 57
+c pi_0_77 <-> 57
+c pi_0_81 <-> 57
+c pi_0_84 <-> 57
+c pi_0_104 <-> 57
+c pi_0_112 <-> 57
+c pi_0_6 <-> 58
+c pi_0_15 <-> 58
+c pi_0_68 <-> 58
+c pi_0_78 <-> 58
+c pi_0_105 <-> 58
+c pi_0_8 <-> 60
+c pi_0_54 <-> 60
+c pi_0_57 <-> 60
+c pi_0_62 <-> 60
+c pi_0_96 <-> 60
+c pi_0_100 <-> 60
+c pi_0_60 <-> 61
+c pi_0_53 <-> 62
+c alp_Class_3_0 <-> 68
+c alp_Class_2_0 <-> 68
+c alp_Class_1_0 <-> 68
+c alp_Class_2_1 <-> 68
+c alp_Class_1_1 <-> 68
+c alp_Class_0_1 <-> 68
+c alp_Class_2_2 <-> 68
+c alp_Class_1_2 <-> 68
+c alp_Class_0_2 <-> 68
+c alp_Class_3_3 <-> 68
+c alp_Class_2_3 <-> 68
+c alp_Class_1_3 <-> 68
+c alp_Class_3_4 <-> 68
+c alp_Class_2_4 <-> 68
+c alp_Class_0_4 <-> 68
+c alp_Class_3_5 <-> 68
+c alp_Class_2_5 <-> 68
+c alp_Class_0_5 <-> 68
+c alp_Class_3_6 <-> 68
+c alp_Class_2_6 <-> 68
+c alp_Class_1_6 <-> 68
+c alp_Class_2_7 <-> 68
+c alp_Class_1_7 <-> 68
+c alp_Class_0_7 <-> 68
+c alp_Class_2_8 <-> 68
+c alp_Class_1_8 <-> 68
+c alp_Class_0_8 <-> 68
+c alp_Class_3_9 <-> 68
+c alp_Class_2_9 <-> 68
+c alp_Class_0_9 <-> 68
+c alp_Class_3_10 <-> 68
+c alp_Class_2_10 <-> 68
+c alp_Class_0_10 <-> 68
+c alp_Class_3_11 <-> 68
+c alp_Class_2_11 <-> 68
+c alp_Class_0_11 <-> 68
+c alp_Class_3_12 <-> 68
+c alp_Class_2_12 <-> 68
+c alp_Class_0_12 <-> 68
+c alp_Class_2_13 <-> 68
+c alp_Class_1_13 <-> 68
+c alp_Class_0_13 <-> 68
+c alp_Class_3_14 <-> 68
+c alp_Class_2_14 <-> 68
+c alp_Class_0_14 <-> 68
+c alp_Class_3_15 <-> 68
+c alp_Class_2_15 <-> 68
+c alp_Class_1_15 <-> 68
+c alp_Class_3_16 <-> 68
+c alp_Class_2_16 <-> 68
+c alp_Class_0_16 <-> 68
+c alp_Class_3_17 <-> 68
+c alp_Class_2_17 <-> 68
+c alp_Class_0_17 <-> 68
+c alp_Class_3_18 <-> 68
+c alp_Class_2_18 <-> 68
+c alp_Class_1_18 <-> 68
+c alp_Class_3_19 <-> 68
+c alp_Class_2_19 <-> 68
+c alp_Class_0_19 <-> 68
+c alp_Class_3_20 <-> 68
+c alp_Class_2_20 <-> 68
+c alp_Class_0_20 <-> 68
+c alp_Class_3_21 <-> 68
+c alp_Class_2_21 <-> 68
+c alp_Class_0_21 <-> 68
+c alp_Class_3_22 <-> 68
+c alp_Class_2_22 <-> 68
+c alp_Class_0_22 <-> 68
+c alp_Class_3_23 <-> 68
+c alp_Class_2_23 <-> 68
+c alp_Class_0_23 <-> 68
+c alp_Class_3_24 <-> 68
+c alp_Class_2_24 <-> 68
+c alp_Class_0_24 <-> 68
+c alp_Class_3_25 <-> 68
+c alp_Class_2_25 <-> 68
+c alp_Class_0_25 <-> 68
+c alp_Class_3_26 <-> 68
+c alp_Class_2_26 <-> 68
+c alp_Class_0_26 <-> 68
+c alp_Class_2_27 <-> 68
+c alp_Class_1_27 <-> 68
+c alp_Class_0_27 <-> 68
+c alp_Class_3_28 <-> 68
+c alp_Class_2_28 <-> 68
+c alp_Class_0_28 <-> 68
+c alp_Class_3_29 <-> 68
+c alp_Class_2_29 <-> 68
+c alp_Class_0_29 <-> 68
+c alp_Class_3_30 <-> 68
+c alp_Class_2_30 <-> 68
+c alp_Class_0_30 <-> 68
+c alp_Class_2_31 <-> 68
+c alp_Class_1_31 <-> 68
+c alp_Class_0_31 <-> 68
+c alp_Class_3_32 <-> 68
+c alp_Class_2_32 <-> 68
+c alp_Class_1_32 <-> 68
+c alp_Class_3_33 <-> 68
+c alp_Class_2_33 <-> 68
+c alp_Class_0_33 <-> 68
+c alp_Class_3_34 <-> 68
+c alp_Class_2_34 <-> 68
+c alp_Class_0_34 <-> 68
+c alp_Class_3_35 <-> 68
+c alp_Class_2_35 <-> 68
+c alp_Class_0_35 <-> 68
+c alp_Class_3_36 <-> 68
+c alp_Class_2_36 <-> 68
+c alp_Class_0_36 <-> 68
+c alp_Class_3_37 <-> 68
+c alp_Class_2_37 <-> 68
+c alp_Class_0_37 <-> 68
+c alp_Class_3_38 <-> 68
+c alp_Class_2_38 <-> 68
+c alp_Class_0_38 <-> 68
+c alp_Class_3_39 <-> 68
+c alp_Class_2_39 <-> 68
+c alp_Class_0_39 <-> 68
+c alp_Class_3_40 <-> 68
+c alp_Class_2_40 <-> 68
+c alp_Class_0_40 <-> 68
+c alp_Class_3_41 <-> 68
+c alp_Class_2_41 <-> 68
+c alp_Class_0_41 <-> 68
+c alp_Class_3_42 <-> 68
+c alp_Class_2_42 <-> 68
+c alp_Class_1_42 <-> 68
+c alp_Class_3_43 <-> 68
+c alp_Class_2_43 <-> 68
+c alp_Class_0_43 <-> 68
+c alp_Class_3_44 <-> 68
+c alp_Class_2_44 <-> 68
+c alp_Class_0_44 <-> 68
+c alp_Class_3_45 <-> 68
+c alp_Class_2_45 <-> 68
+c alp_Class_0_45 <-> 68
+c alp_Class_3_46 <-> 68
+c alp_Class_2_46 <-> 68
+c alp_Class_0_46 <-> 68
+c alp_Class_3_47 <-> 68
+c alp_Class_2_47 <-> 68
+c alp_Class_0_47 <-> 68
+c alp_Class_3_48 <-> 68
+c alp_Class_2_48 <-> 68
+c alp_Class_0_48 <-> 68
+c alp_Class_3_49 <-> 68
+c alp_Class_2_49 <-> 68
+c alp_Class_0_49 <-> 68
+c alp_Class_3_50 <-> 68
+c alp_Class_2_50 <-> 68
+c alp_Class_0_50 <-> 68
+c alp_Class_3_51 <-> 68
+c alp_Class_2_51 <-> 68
+c alp_Class_0_51 <-> 68
+c alp_Class_3_52 <-> 68
+c alp_Class_2_52 <-> 68
+c alp_Class_0_52 <-> 68
+c alp_Class_3_53 <-> 68
+c alp_Class_2_53 <-> 68
+c alp_Class_1_53 <-> 68
+c alp_Class_2_54 <-> 68
+c alp_Class_1_54 <-> 68
+c alp_Class_0_54 <-> 68
+c alp_Class_2_55 <-> 68
+c alp_Class_1_55 <-> 68
+c alp_Class_0_55 <-> 68
+c alp_Class_3_56 <-> 68
+c alp_Class_2_56 <-> 68
+c alp_Class_0_56 <-> 68
+c alp_Class_2_57 <-> 68
+c alp_Class_1_57 <-> 68
+c alp_Class_0_57 <-> 68
+c alp_Class_3_58 <-> 68
+c alp_Class_2_58 <-> 68
+c alp_Class_0_58 <-> 68
+c alp_Class_3_59 <-> 68
+c alp_Class_2_59 <-> 68
+c alp_Class_0_59 <-> 68
+c alp_Class_2_60 <-> 68
+c alp_Class_1_60 <-> 68
+c alp_Class_0_60 <-> 68
+c alp_Class_3_61 <-> 68
+c alp_Class_2_61 <-> 68
+c alp_Class_0_61 <-> 68
+c alp_Class_2_62 <-> 68
+c alp_Class_1_62 <-> 68
+c alp_Class_0_62 <-> 68
+c alp_Class_3_63 <-> 68
+c alp_Class_2_63 <-> 68
+c alp_Class_0_63 <-> 68
+c alp_Class_3_64 <-> 68
+c alp_Class_2_64 <-> 68
+c alp_Class_0_64 <-> 68
+c alp_Class_3_65 <-> 68
+c alp_Class_2_65 <-> 68
+c alp_Class_0_65 <-> 68
+c alp_Class_3_66 <-> 68
+c alp_Class_2_66 <-> 68
+c alp_Class_1_66 <-> 68
+c alp_Class_2_67 <-> 68
+c alp_Class_1_67 <-> 68
+c alp_Class_0_67 <-> 68
+c alp_Class_3_68 <-> 68
+c alp_Class_2_68 <-> 68
+c alp_Class_1_68 <-> 68
+c alp_Class_3_69 <-> 68
+c alp_Class_2_69 <-> 68
+c alp_Class_0_69 <-> 68
+c alp_Class_3_70 <-> 68
+c alp_Class_2_70 <-> 68
+c alp_Class_0_70 <-> 68
+c alp_Class_3_71 <-> 68
+c alp_Class_2_71 <-> 68
+c alp_Class_0_71 <-> 68
+c alp_Class_3_72 <-> 68
+c alp_Class_2_72 <-> 68
+c alp_Class_0_72 <-> 68
+c alp_Class_3_73 <-> 68
+c alp_Class_2_73 <-> 68
+c alp_Class_0_73 <-> 68
+c alp_Class_3_74 <-> 68
+c alp_Class_2_74 <-> 68
+c alp_Class_0_74 <-> 68
+c alp_Class_2_75 <-> 68
+c alp_Class_1_75 <-> 68
+c alp_Class_0_75 <-> 68
+c alp_Class_3_76 <-> 68
+c alp_Class_2_76 <-> 68
+c alp_Class_0_76 <-> 68
+c alp_Class_3_77 <-> 68
+c alp_Class_2_77 <-> 68
+c alp_Class_0_77 <-> 68
+c alp_Class_3_78 <-> 68
+c alp_Class_2_78 <-> 68
+c alp_Class_1_78 <-> 68
+c alp_Class_3_79 <-> 68
+c alp_Class_2_79 <-> 68
+c alp_Class_0_79 <-> 68
+c alp_Class_3_80 <-> 68
+c alp_Class_2_80 <-> 68
+c alp_Class_0_80 <-> 68
+c alp_Class_3_81 <-> 68
+c alp_Class_2_81 <-> 68
+c alp_Class_0_81 <-> 68
+c alp_Class_3_82 <-> 68
+c alp_Class_2_82 <-> 68
+c alp_Class_0_82 <-> 68
+c alp_Class_3_83 <-> 68
+c alp_Class_2_83 <-> 68
+c alp_Class_0_83 <-> 68
+c alp_Class_3_84 <-> 68
+c alp_Class_2_84 <-> 68
+c alp_Class_0_84 <-> 68
+c alp_Class_3_85 <-> 68
+c alp_Class_2_85 <-> 68
+c alp_Class_0_85 <-> 68
+c alp_Class_3_86 <-> 68
+c alp_Class_2_86 <-> 68
+c alp_Class_0_86 <-> 68
+c alp_Class_3_87 <-> 68
+c alp_Class_2_87 <-> 68
+c alp_Class_0_87 <-> 68
+c alp_Class_3_88 <-> 68
+c alp_Class_2_88 <-> 68
+c alp_Class_0_88 <-> 68
+c alp_Class_3_89 <-> 68
+c alp_Class_2_89 <-> 68
+c alp_Class_1_89 <-> 68
+c alp_Class_3_90 <-> 68
+c alp_Class_2_90 <-> 68
+c alp_Class_1_90 <-> 68
+c alp_Class_3_91 <-> 68
+c alp_Class_2_91 <-> 68
+c alp_Class_0_91 <-> 68
+c alp_Class_2_92 <-> 68
+c alp_Class_1_92 <-> 68
+c alp_Class_0_92 <-> 68
+c alp_Class_3_93 <-> 68
+c alp_Class_2_93 <-> 68
+c alp_Class_0_93 <-> 68
+c alp_Class_3_94 <-> 68
+c alp_Class_2_94 <-> 68
+c alp_Class_0_94 <-> 68
+c alp_Class_3_95 <-> 68
+c alp_Class_2_95 <-> 68
+c alp_Class_0_95 <-> 68
+c alp_Class_2_96 <-> 68
+c alp_Class_1_96 <-> 68
+c alp_Class_0_96 <-> 68
+c alp_Class_3_97 <-> 68
+c alp_Class_2_97 <-> 68
+c alp_Class_0_97 <-> 68
+c alp_Class_2_98 <-> 68
+c alp_Class_1_98 <-> 68
+c alp_Class_0_98 <-> 68
+c alp_Class_3_99 <-> 68
+c alp_Class_2_99 <-> 68
+c alp_Class_0_99 <-> 68
+c alp_Class_2_100 <-> 68
+c alp_Class_1_100 <-> 68
+c alp_Class_0_100 <-> 68
+c alp_Class_3_101 <-> 68
+c alp_Class_2_101 <-> 68
+c alp_Class_0_101 <-> 68
+c alp_Class_3_102 <-> 68
+c alp_Class_2_102 <-> 68
+c alp_Class_1_102 <-> 68
+c alp_Class_3_103 <-> 68
+c alp_Class_2_103 <-> 68
+c alp_Class_0_103 <-> 68
+c alp_Class_3_104 <-> 68
+c alp_Class_2_104 <-> 68
+c alp_Class_0_104 <-> 68
+c alp_Class_3_105 <-> 68
+c alp_Class_2_105 <-> 68
+c alp_Class_1_105 <-> 68
+c alp_Class_3_106 <-> 68
+c alp_Class_2_106 <-> 68
+c alp_Class_0_106 <-> 68
+c alp_Class_3_107 <-> 68
+c alp_Class_2_107 <-> 68
+c alp_Class_0_107 <-> 68
+c alp_Class_3_108 <-> 68
+c alp_Class_2_108 <-> 68
+c alp_Class_0_108 <-> 68
+c alp_Class_2_109 <-> 68
+c alp_Class_1_109 <-> 68
+c alp_Class_0_109 <-> 68
+c alp_Class_3_110 <-> 68
+c alp_Class_2_110 <-> 68
+c alp_Class_0_110 <-> 68
+c alp_Class_3_111 <-> 68
+c alp_Class_2_111 <-> 68
+c alp_Class_0_111 <-> 68
+c alp_Class_3_112 <-> 68
+c alp_Class_2_112 <-> 68
+c alp_Class_0_112 <-> 68
+c alp_Class_3_113 <-> 68
+c alp_Class_2_113 <-> 68
+c alp_Class_0_113 <-> 68
+c alp_Class_3_114 <-> 68
+c alp_Class_2_114 <-> 68
+c alp_Class_0_114 <-> 68
+c alp_Class_3_115 <-> 68
+c alp_Class_2_115 <-> 68
+c alp_Class_0_115 <-> 68
+c alp_Class_3_116 <-> 68
+c alp_Class_2_116 <-> 68
+c alp_Class_0_116 <-> 68
+c alp_Class_3_117 <-> 68
+c alp_Class_2_117 <-> 68
+c alp_Class_0_117 <-> 68
+c alp_Class_3_118 <-> 68
+c alp_Class_2_118 <-> 68
+c alp_Class_0_118 <-> 68
+c alp_Class_3_119 <-> 68
+c alp_Class_2_119 <-> 68
+c alp_Class_0_119 <-> 68
+c alp_Class_3_120 <-> 68
+c alp_Class_2_120 <-> 68
+c alp_Class_0_120 <-> 68
+c alp_Class_3_121 <-> 68
+c alp_Class_2_121 <-> 68
+c alp_Class_0_121 <-> 68
+c alp_Class_3_122 <-> 68
+c alp_Class_2_122 <-> 68
+c alp_Class_0_122 <-> 68
+c alp_Class_3_123 <-> 68
+c alp_Class_2_123 <-> 68
+c alp_Class_0_123 <-> 68
+c alp_Class_3_124 <-> 68
+c alp_Class_2_124 <-> 68
+c alp_Class_0_124 <-> 68
+c alp_Class_2_125 <-> 68
+c alp_Class_1_125 <-> 68
+c alp_Class_0_125 <-> 68
+c alp_Class_3_126 <-> 68
+c alp_Class_2_126 <-> 68
+c alp_Class_0_126 <-> 68
+c alp_Class_3_127 <-> 68
+c alp_Class_2_127 <-> 68
+c alp_Class_0_127 <-> 68
+c alp_Class_3_128 <-> 68
+c alp_Class_2_128 <-> 68
+c alp_Class_0_128 <-> 68
+c alp_Class_3_129 <-> 68
+c alp_Class_2_129 <-> 68
+c alp_Class_0_129 <-> 68
+c alp_Class_3_130 <-> 68
+c alp_Class_2_130 <-> 68
+c alp_Class_0_130 <-> 68
+c alp_Class_2_131 <-> 68
+c alp_Class_1_131 <-> 68
+c alp_Class_0_131 <-> 68
+c alp_Class_3_132 <-> 68
+c alp_Class_2_132 <-> 68
+c alp_Class_0_132 <-> 68
+c alp_Class_3_133 <-> 68
+c alp_Class_2_133 <-> 68
+c alp_Class_0_133 <-> 68
+c alp_Class_3_134 <-> 68
+c alp_Class_2_134 <-> 68
+c alp_Class_1_134 <-> 68
+c alp_Class_1_4 <-> 69
+c alp_Class_1_5 <-> 69
+c alp_Class_1_9 <-> 69
+c alp_Class_1_10 <-> 69
+c alp_Class_1_11 <-> 69
+c alp_Class_1_12 <-> 69
+c alp_Class_1_14 <-> 69
+c alp_Class_1_16 <-> 69
+c alp_Class_1_17 <-> 69
+c alp_Class_1_19 <-> 69
+c alp_Class_1_20 <-> 69
+c alp_Class_1_21 <-> 69
+c alp_Class_1_22 <-> 69
+c alp_Class_1_23 <-> 69
+c alp_Class_1_24 <-> 69
+c alp_Class_1_25 <-> 69
+c alp_Class_1_26 <-> 69
+c alp_Class_1_28 <-> 69
+c alp_Class_1_29 <-> 69
+c alp_Class_1_30 <-> 69
+c alp_Class_1_33 <-> 69
+c alp_Class_1_34 <-> 69
+c alp_Class_1_35 <-> 69
+c alp_Class_1_36 <-> 69
+c alp_Class_1_37 <-> 69
+c alp_Class_1_38 <-> 69
+c alp_Class_1_39 <-> 69
+c alp_Class_1_40 <-> 69
+c alp_Class_1_41 <-> 69
+c alp_Class_1_43 <-> 69
+c alp_Class_1_44 <-> 69
+c alp_Class_1_45 <-> 69
+c alp_Class_1_46 <-> 69
+c alp_Class_1_47 <-> 69
+c alp_Class_1_48 <-> 69
+c alp_Class_1_49 <-> 69
+c alp_Class_1_50 <-> 69
+c alp_Class_1_51 <-> 69
+c alp_Class_1_52 <-> 69
+c alp_Class_1_56 <-> 69
+c alp_Class_1_58 <-> 69
+c alp_Class_1_59 <-> 69
+c alp_Class_1_61 <-> 69
+c alp_Class_1_63 <-> 69
+c alp_Class_1_64 <-> 69
+c alp_Class_1_65 <-> 69
+c alp_Class_1_69 <-> 69
+c alp_Class_1_70 <-> 69
+c alp_Class_1_71 <-> 69
+c alp_Class_1_72 <-> 69
+c alp_Class_1_73 <-> 69
+c alp_Class_1_74 <-> 69
+c alp_Class_1_76 <-> 69
+c alp_Class_1_77 <-> 69
+c alp_Class_1_79 <-> 69
+c alp_Class_1_80 <-> 69
+c alp_Class_1_81 <-> 69
+c alp_Class_1_82 <-> 69
+c alp_Class_1_83 <-> 69
+c alp_Class_1_84 <-> 69
+c alp_Class_1_85 <-> 69
+c alp_Class_1_86 <-> 69
+c alp_Class_1_87 <-> 69
+c alp_Class_1_88 <-> 69
+c alp_Class_1_91 <-> 69
+c alp_Class_1_93 <-> 69
+c alp_Class_1_94 <-> 69
+c alp_Class_1_95 <-> 69
+c alp_Class_1_97 <-> 69
+c alp_Class_1_99 <-> 69
+c alp_Class_1_101 <-> 69
+c alp_Class_1_103 <-> 69
+c alp_Class_1_104 <-> 69
+c alp_Class_1_106 <-> 69
+c alp_Class_1_107 <-> 69
+c alp_Class_1_108 <-> 69
+c alp_Class_1_110 <-> 69
+c alp_Class_1_111 <-> 69
+c alp_Class_1_112 <-> 69
+c alp_Class_1_113 <-> 69
+c alp_Class_1_114 <-> 69
+c alp_Class_1_115 <-> 69
+c alp_Class_1_116 <-> 69
+c alp_Class_1_117 <-> 69
+c alp_Class_1_118 <-> 69
+c alp_Class_1_119 <-> 69
+c alp_Class_1_120 <-> 69
+c alp_Class_1_121 <-> 69
+c alp_Class_1_122 <-> 69
+c alp_Class_1_123 <-> 69
+c alp_Class_1_124 <-> 69
+c alp_Class_1_126 <-> 69
+c alp_Class_1_127 <-> 69
+c alp_Class_1_128 <-> 69
+c alp_Class_1_129 <-> 69
+c alp_Class_1_130 <-> 69
+c alp_Class_1_132 <-> 69
+c alp_Class_1_133 <-> 69
+c Class_P100 <-> 69
+c alp_Class_3_1 <-> 70
+c alp_Class_3_2 <-> 70
+c alp_Class_3_7 <-> 70
+c alp_Class_3_8 <-> 70
+c alp_Class_3_13 <-> 70
+c alp_Class_3_27 <-> 70
+c alp_Class_3_31 <-> 70
+c alp_Class_3_54 <-> 70
+c alp_Class_3_55 <-> 70
+c alp_Class_3_57 <-> 70
+c alp_Class_3_60 <-> 70
+c alp_Class_3_62 <-> 70
+c alp_Class_3_67 <-> 70
+c alp_Class_3_75 <-> 70
+c alp_Class_3_92 <-> 70
+c alp_Class_3_96 <-> 70
+c alp_Class_3_98 <-> 70
+c alp_Class_3_100 <-> 70
+c alp_Class_3_109 <-> 70
+c alp_Class_3_125 <-> 70
+c alp_Class_3_131 <-> 70
+c Class_P300 <-> 70
+c alp_Class_0_0 <-> 71
+c alp_Class_0_3 <-> 71
+c alp_Class_0_6 <-> 71
+c alp_Class_0_15 <-> 71
+c alp_Class_0_18 <-> 71
+c alp_Class_0_32 <-> 71
+c alp_Class_0_42 <-> 71
+c alp_Class_0_53 <-> 71
+c alp_Class_0_66 <-> 71
+c alp_Class_0_68 <-> 71
+c alp_Class_0_78 <-> 71
+c alp_Class_0_89 <-> 71
+c alp_Class_0_90 <-> 71
+c alp_Class_0_102 <-> 71
+c alp_Class_0_105 <-> 71
+c alp_Class_0_134 <-> 71
+c Class_P0 <-> 71
+c phi_T_transitions_consistency <-> 72
+c tau_0_3_Class_3 <-> 119
+c tau_0_3_Class_2 <-> 121
+c tau_0_3_Class_1 <-> 122
+c tau_0_3_Class_0 <-> 123
+c tau_0_2_Class_3 <-> 136
+c tau_0_2_Class_2 <-> 138
+c tau_0_2_Class_1 <-> 139
+c tau_0_2_Class_0 <-> 140
+c tau_0_1_Class_3 <-> 141
+c tau_0_1_Class_2 <-> 142
+c tau_0_1_Class_1 <-> 143
+c tau_0_1_Class_0 <-> 144
+c tau_0_0_Class_3 <-> 145
+c tau_0_0_Class_2 <-> 146
+c tau_0_0_Class_1 <-> 147
+c tau_0_0_Class_0 <-> 148
+c phi_T_feature_det <-> 149
+c lam_0_median_income <-> 152
+c lam_0_population <-> 153
+p wcnf 153 544 136  
+136 1 0
+136 2 -3 0
+136 2 -8 0
+136 -2 8 3 0
+1 2 0
+136 -3 4 0
+136 -3 152 0
+136 3 -152 -4 0
+136 -4 -141 0
+136 -4 5 0
+136 4 -5 141 0
+136 -5 -142 0
+136 -5 6 0
+136 5 -6 142 0
+136 -6 -143 0
+136 -6 7 0
+136 6 -7 143 0
+136 7 144 0
+136 7 -71 0
+136 -7 71 -144 0
+136 -8 9 0
+136 -8 153 0
+136 8 -153 -9 0
+136 -9 -145 0
+136 -9 10 0
+136 9 -10 145 0
+136 -10 -146 0
+136 -10 11 0
+136 10 -11 146 0
+136 -11 -147 0
+136 -11 12 0
+136 11 -12 147 0
+136 12 148 0
+136 12 -71 0
+136 -12 71 -148 0
+136 13 -14 0
+136 13 -19 0
+136 -13 19 14 0
+1 13 0
+136 -14 15 0
+136 -14 152 0
+136 14 -152 -15 0
+136 -15 -141 0
+136 -15 16 0
+136 15 -16 141 0
+136 -16 -142 0
+136 -16 17 0
+136 16 -17 142 0
+136 -17 -144 0
+136 -17 18 0
+136 17 -18 144 0
+136 18 143 0
+136 18 -69 0
+136 -18 69 -143 0
+136 -19 20 0
+136 -19 153 0
+136 19 -153 -20 0
+136 -20 -145 0
+136 -20 21 0
+136 20 -21 145 0
+136 -21 -146 0
+136 -21 22 0
+136 21 -22 146 0
+136 -22 -148 0
+136 -22 23 0
+136 22 -23 148 0
+136 23 147 0
+136 23 -69 0
+136 -23 69 -147 0
+136 24 -25 0
+136 24 -26 0
+136 -24 26 25 0
+1 24 0
+136 -25 20 0
+136 -25 152 0
+136 25 -152 -20 0
+136 -26 27 0
+136 -26 153 0
+136 26 -153 -27 0
+136 -27 -119 0
+136 -27 28 0
+136 27 -28 119 0
+136 -28 -121 0
+136 -28 29 0
+136 28 -29 121 0
+136 -29 30 0
+136 -29 -123 0
+136 29 123 -30 0
+136 30 122 0
+136 30 -69 0
+136 -30 69 -122 0
+136 31 -32 0
+136 31 -37 0
+136 -31 37 32 0
+1 31 0
+136 -32 33 0
+136 -32 152 0
+136 32 -152 -33 0
+136 -33 34 0
+136 -33 35 0
+136 33 -35 -34 0
+136 34 145 0
+136 34 -70 0
+136 -34 70 -145 0
+136 -35 -146 0
+136 -35 36 0
+136 35 -36 146 0
+136 -36 -147 0
+136 -36 -148 0
+136 36 148 147 0
+136 -37 38 0
+136 -37 153 0
+136 37 -153 -38 0
+136 -38 39 0
+136 -38 40 0
+136 38 -40 -39 0
+136 39 141 0
+136 39 -70 0
+136 -39 70 -141 0
+136 -40 -142 0
+136 -40 41 0
+136 40 -41 142 0
+136 -41 -143 0
+136 -41 -144 0
+136 41 144 143 0
+136 42 -14 0
+136 42 -43 0
+136 -42 43 14 0
+1 42 0
+136 -43 44 0
+136 -43 153 0
+136 43 -153 -44 0
+136 -44 -136 0
+136 -44 45 0
+136 44 -45 136 0
+136 -45 -138 0
+136 -45 46 0
+136 45 -46 138 0
+136 -46 47 0
+136 -46 -140 0
+136 46 140 -47 0
+136 47 139 0
+136 47 -69 0
+136 -47 69 -139 0
+136 48 -49 0
+136 48 -50 0
+136 -48 50 49 0
+1 48 0
+136 -49 38 0
+136 -49 152 0
+136 49 -152 -38 0
+136 -50 51 0
+136 -50 153 0
+136 50 -153 -51 0
+136 -51 52 0
+136 -51 53 0
+136 51 -53 -52 0
+136 52 136 0
+136 52 -70 0
+136 -52 70 -136 0
+136 -53 -138 0
+136 -53 54 0
+136 53 -54 138 0
+136 -54 -139 0
+136 -54 -140 0
+136 54 140 139 0
+136 55 -19 0
+136 55 -25 0
+136 -55 25 19 0
+1 55 0
+136 56 -25 0
+136 56 -43 0
+136 -56 43 25 0
+1 56 0
+136 57 -14 0
+136 57 -26 0
+136 -57 26 14 0
+1 57 0
+136 58 -8 0
+136 58 -59 0
+136 -58 59 8 0
+1 58 0
+136 -59 9 0
+136 -59 152 0
+136 59 -152 -9 0
+136 60 -37 0
+136 60 -49 0
+136 -60 49 37 0
+1 60 0
+136 61 -32 0
+136 61 -50 0
+136 -61 50 32 0
+1 61 0
+136 62 -59 0
+136 62 -63 0
+136 -62 63 59 0
+1 62 0
+136 -63 64 0
+136 -63 153 0
+136 63 -153 -64 0
+136 -64 -136 0
+136 -64 65 0
+136 64 -65 136 0
+136 -65 -138 0
+136 -65 66 0
+136 65 -66 138 0
+136 -66 -139 0
+136 -66 67 0
+136 66 -67 139 0
+136 67 140 0
+136 67 -71 0
+136 -67 71 -140 0
+136 -68 0
+136 72 152 0
+136 72 -73 0
+136 -72 73 -152 0
+136 72 0
+136 -73 -119 0
+136 -73 74 0
+136 73 -74 119 0
+136 -74 -121 0
+136 -74 75 0
+136 74 -75 121 0
+136 -75 -122 0
+136 -75 76 0
+136 75 -76 122 0
+136 -76 -123 0
+136 -76 77 0
+136 76 -77 123 0
+136 -77 -136 0
+136 -77 53 0
+136 77 -53 136 0
+136 78 152 0
+136 78 -79 0
+136 -78 79 -152 0
+136 78 0
+136 -79 80 0
+136 -79 92 0
+136 79 -92 -80 0
+136 80 -81 0
+136 80 -82 0
+136 -80 82 81 0
+136 -81 40 0
+136 -81 141 0
+136 81 -141 -40 0
+136 82 -83 0
+136 82 -85 0
+136 -82 85 83 0
+136 -83 84 0
+136 -83 142 0
+136 83 -142 -84 0
+136 -84 -141 0
+136 -84 41 0
+136 84 -41 141 0
+136 85 -86 0
+136 85 -89 0
+136 -85 89 86 0
+136 -86 87 0
+136 -86 143 0
+136 86 -143 -87 0
+136 -87 -141 0
+136 -87 88 0
+136 87 -88 141 0
+136 -88 -142 0
+136 -88 -144 0
+136 88 144 142 0
+136 -89 90 0
+136 -89 144 0
+136 89 -144 -90 0
+136 -90 -141 0
+136 -90 91 0
+136 90 -91 141 0
+136 -91 -142 0
+136 -91 -143 0
+136 91 143 142 0
+136 92 -93 0
+136 92 -94 0
+136 -92 94 93 0
+136 -93 35 0
+136 -93 145 0
+136 93 -145 -35 0
+136 94 -95 0
+136 94 -97 0
+136 -94 97 95 0
+136 -95 96 0
+136 -95 146 0
+136 95 -146 -96 0
+136 -96 -145 0
+136 -96 36 0
+136 96 -36 145 0
+136 97 -98 0
+136 97 -101 0
+136 -97 101 98 0
+136 -98 99 0
+136 -98 147 0
+136 98 -147 -99 0
+136 -99 -145 0
+136 -99 100 0
+136 99 -100 145 0
+136 -100 -146 0
+136 -100 -148 0
+136 100 148 146 0
+136 -101 102 0
+136 -101 148 0
+136 101 -148 -102 0
+136 -102 -145 0
+136 -102 103 0
+136 102 -103 145 0
+136 -103 -146 0
+136 -103 -147 0
+136 103 147 146 0
+136 104 153 0
+136 104 -105 0
+136 -104 105 -153 0
+136 104 0
+136 -105 106 0
+136 -105 124 0
+136 105 -124 -106 0
+136 106 -107 0
+136 106 -109 0
+136 -106 109 107 0
+136 -107 108 0
+136 -107 119 0
+136 107 -119 -108 0
+136 -108 -121 0
+136 -108 112 0
+136 108 -112 121 0
+136 109 -110 0
+136 109 -113 0
+136 -109 113 110 0
+136 -110 111 0
+136 -110 121 0
+136 110 -121 -111 0
+136 -111 -119 0
+136 -111 112 0
+136 111 -112 119 0
+136 -112 -122 0
+136 -112 -123 0
+136 112 123 122 0
+136 113 -114 0
+136 113 -117 0
+136 -113 117 114 0
+136 -114 115 0
+136 -114 122 0
+136 114 -122 -115 0
+136 -115 -119 0
+136 -115 116 0
+136 115 -116 119 0
+136 -116 -121 0
+136 -116 -123 0
+136 116 123 121 0
+136 -117 118 0
+136 -117 123 0
+136 117 -123 -118 0
+136 -118 -119 0
+136 -118 120 0
+136 118 -120 119 0
+136 -120 -121 0
+136 -120 -122 0
+136 120 122 121 0
+136 -124 79 0
+136 -124 125 0
+136 124 -125 -79 0
+136 125 -126 0
+136 125 -127 0
+136 -125 127 126 0
+136 -126 53 0
+136 -126 136 0
+136 126 -136 -53 0
+136 127 -128 0
+136 127 -130 0
+136 -127 130 128 0
+136 -128 129 0
+136 -128 138 0
+136 128 -138 -129 0
+136 -129 -136 0
+136 -129 54 0
+136 129 -54 136 0
+136 130 -131 0
+136 130 -134 0
+136 -130 134 131 0
+136 -131 132 0
+136 -131 139 0
+136 131 -139 -132 0
+136 -132 -136 0
+136 -132 133 0
+136 132 -133 136 0
+136 -133 -138 0
+136 -133 -140 0
+136 133 140 138 0
+136 -134 135 0
+136 -134 140 0
+136 134 -140 -135 0
+136 -135 -136 0
+136 -135 137 0
+136 135 -137 136 0
+136 -137 -138 0
+136 -137 -139 0
+136 137 139 138 0
+136 149 -150 0
+136 149 -151 0
+136 -149 151 150 0
+136 149 0
+136 -150 -153 0
+136 -150 152 0
+136 150 -152 153 0
+136 -151 -152 0
+136 -151 153 0
+136 151 -153 152 0
