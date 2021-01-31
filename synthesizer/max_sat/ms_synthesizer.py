@@ -206,6 +206,8 @@ def synthesize_dot_code(target_path,program_edges,program_nodes,file_name):
 
 def extract_program(encoding_path,model,target_path,input_names,file_name):
 
+    print(target_path)
+
     os.system(f"mkdir -p {target_path}program")
     program_edges, program_nodes = extract_program_map(encoding_path,model)
 
@@ -264,9 +266,8 @@ def synthesize(benchmark_path,samples,file_name):
 
     encoding_path, pi_vars = smallencoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,encoding_file_name)
     #encoding_path = "" # TODO call encoder. use output path as directory to store encoding 
-
     
-    # print (pi_vars)
+    #print (pi_vars)
     #print (tau_vars)
     #print (lam_vars)
     # maxsat 
@@ -279,16 +280,28 @@ def synthesize(benchmark_path,samples,file_name):
 #    os.system(f"python3 /home/shetal/pysat/examples/fm.py -vv {encoding_path} > {witness_path}")
 ## Run the RC2 MaxSat solver
     witness_file = open(witness_path,"w")
+
+    pfound = True
     with RC2(wcnf) as rc2:
-        rc2.compute()
+        x =  rc2.compute()
+    #    print (x)
         cost = rc2.cost
         print(f"Cost:{cost}")
-        model = rc2.model
-        s1=str(model)
-        witness_file.write(s1)
+        try:
+            model = rc2.model
+            s1=str(model)
+            #print(s1)
+            witness_file.write(s1)
+        except:
+            print("No program found. Instance is Unsatisfiable ")
+            pfound = False
 
     witness_file.close()
 
+    program_path = ""
+    dot_path = ""
+    if not pfound:
+        return program_path, dot_path, 0
 ##TODO: Create a dot file from the tau and lam variables
 
     # TODO safe program into witness file 
@@ -300,11 +313,11 @@ def synthesize(benchmark_path,samples,file_name):
         for i in range(len(s)):
             input_names.append(s[i][0])
         break
-    # print(input_names)
     program_path = ""
     dot_path = ""
     # TODO extract program from witness
 
+    print(input_names)
     sat_samples=len(samples) - cost
     print(f"SatSamples :{sat_samples}")
     program_path, dot_path, png_path = extract_program(encoding_path,model,benchmark_path,input_names,file_name)
