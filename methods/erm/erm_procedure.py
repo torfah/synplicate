@@ -7,7 +7,7 @@ import timeit
 
 
 
-def execute(benchmark_path, synthesizer, delta, epsilon,name):
+def execute(benchmark_path, synthesizer, delta, epsilon,name,samples={}):
     print("Executing ERM procedure...")
     # determine number of samples based on the values of delta and epsilon 
     synthesizer.initialize(benchmark_path)
@@ -17,14 +17,14 @@ def execute(benchmark_path, synthesizer, delta, epsilon,name):
     # =================================================================================================
     # import sampler
     sampler = importlib.import_module(f".sampler",benchmark_path.replace("/",".").rstrip('.'))
-    samples = {}
 
     # Compute number of samples according to emprirical risk minimization 
     class_size = synthesizer.compute_class_size()
     num_of_samples = math.ceil(math.log((1+class_size)/delta)/epsilon)
     print(f"Using {num_of_samples} samples ...")
     
-    samples.update(sampler.uniform(num_of_samples))
+    if samples == {}:
+        samples.update(sampler.uniform(num_of_samples))
 
     # =================================================================================================
     # =================================================================================================
