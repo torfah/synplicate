@@ -48,12 +48,13 @@ def synthesize(data_file_path, class_names, dir_path, depth,file_name):
     misclassification_rate = count/len(outputs)
     print(f"Synthesized decision tree with misclassification rate: {misclassification_rate}")
 
-    # Visualization 
+    # Visualization
+    os.system(f"mkdir {dir_path}/cart") 
     dot_data = tree.export_graphviz(dt, out_file=None, feature_names=feature_names, class_names=class_names)
     graph = graphviz.Source(dot_data)
-    graph.render(f"{dir_path}/program/cart_dt_{file_name}")
+    graph.render(f"{dir_path}/cart/cart_dt_{file_name}")
 
-    os.system(f"dot -Tpng {dir_path}/program/cart_dt_{file_name} -o {dir_path}/program/cart_dt_{file_name}.png")
+    os.system(f"dot -Tpng {dir_path}/cart/cart_dt_{file_name} -o {dir_path}/cart/cart_dt_{file_name}.png")
 
     return dt
 

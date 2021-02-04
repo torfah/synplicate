@@ -15,17 +15,22 @@ from synthesizer.max_sat import ms_synthesizer
 from synthesizer.omt import omt_synthesizer
 from synthesizer.decision_trees import cart_tree_synthesizer
 
-
-
-from evaluator.recall_evaluator import evaluator
-from evaluator.cochran_evaluator import evaluator as cochran
+# from evaluator.recall_evaluator import evaluator
+from evaluator.cochran_evaluator import evaluator 
 
 import timeit
 
 
-def experiment(dd_size, delta, epsilon, dir_name,depth,num_eva):
 
-    synthesis_benchmark_path = f"experiments/ICML/loan_acquisition/"
+
+
+mmc_flag = False
+
+def experiment(dd_size, delta, epsilon, dir_name,depth, num_iter,num_eva):
+
+    synthesis_benchmark_path = f"experiments/ICML/AutoTaxi/"
+    os.system(f"rm -r {synthesis_benchmark_path}program")
+    os.system(f"rm -r {synthesis_benchmark_path}samples")
     test = synthesis_benchmark_path.replace("/",".").rstrip('.')
 
     ################################################################################################################
@@ -59,33 +64,17 @@ def experiment(dd_size, delta, epsilon, dir_name,depth,num_eva):
     stop = timeit.default_timer()
     erm_synthesis_time = stop-start
 
-    # # USING MMC
-    # start = timeit.default_timer()
-    # erm_mmc_samples, erm_mmc_program_path = erm.execute(synthesis_benchmark_path,mmc_synthesizer,delta,epsilon,"mmc")
-    # stop = timeit.default_timer()
-    # erm_mmc_synthesis_time = stop-start
-
     samples_file = f"{synthesis_benchmark_path}samples/erm_syn_samples.csv"
+
+    # USING MMC
+    if mmc_flag:
+        start = timeit.default_timer()
+        erm_mmc_samples, erm_mmc_program_path = erm.execute(synthesis_benchmark_path,mmc_synthesizer,delta,epsilon,"mmc")
+        stop = timeit.default_timer()
+        erm_mmc_synthesis_time = stop-start
+
     
-    # USING SKLEARN CART
-    print("Executing CART unbounded depth ...")
-    ## UNBOUNDED DEPTH 
-    start = timeit.default_timer()
-    cart_unbounded_tree = cart_tree_synthesizer.synthesize(samples_file,["0","1","2","3"], synthesis_benchmark_path,-1,"unbounded")
-    cart_unbounded_depth = cart_unbounded_tree.get_depth()
-    cart_unbounded_nodes = cart_unbounded_tree.get_n_leaves()
-    stop = timeit.default_timer()
-    cart_unbounded_synthesis_time = stop-start
-
-    ## BOUNDED DEPTH 
-    print("Executing CART bounded depth ...")
-    start = timeit.default_timer()
-    cart_depth_tree = cart_tree_synthesizer.synthesize(samples_file,["0","1","2","3"], synthesis_benchmark_path,depth,"depth")
-    cart_bounded_depth = cart_depth_tree.get_depth()
-    cart_bounded_nodes = cart_depth_tree.get_n_leaves()
-    stop = timeit.default_timer()
-    cart_depth_synthesis_time = stop-start
-
+    
     # USING INFERDT
     ## AUX
     def parse_inferdt(tree_text,out_file_path):
@@ -127,20 +116,43 @@ def experiment(dd_size, delta, epsilon, dir_name,depth,num_eva):
     os.system(f"mkdir {synthesis_benchmark_path}inferdt")
     ## OPTIMAL DEPTH AND SIZE
     print("Executing InferDT depth + size ...")
+    timeout_flag = False
     start = timeit.default_timer()
-    inferdt_depth_size_tree = run(f"./synthesizer/InferDT/InferDT {samples_file} -v -x infer", stdout=PIPE, stderr=STDOUT, universal_newlines=True, shell=True, timeout=300)
-    inferdt_depth_size_depth, inferdt_depth_size_nodes, inferdt_depth_size_path = parse_inferdt(inferdt_depth_size_tree,f"{synthesis_benchmark_path}inferdt/dt_d_s.py")
-    inferdt_synthesis_time = stop-start
-
-    print(inferdt_depth_size_depth,inferdt_depth_size_nodes)
+    try:
+        inferdt_depth_size_tree = run(f"./synthesizer/InferDT/InferDT {samples_file} -v -x infer", stdout=PIPE, stderr=STDOUT, universal_newlines=True, shell=True, timeout=30)
+        inferdt_depth_size_depth, inferdt_depth_size_nodes, inferdt_depth_size_path = parse_inferdt(inferdt_depth_size_tree,f"{synthesis_benchmark_path}inferdt/dt_d_s.py")
+        print(inferdt_depth_size_depth,inferdt_depth_size_nodes)
+    except:
+        print("InferDT timeout!")
+        timeout_flag = True
+        inferdt_depth_size_depth = "N/A"
+        inferdt_depth_size_nodes = "N/A"
+    stop = timeit.default_timer()
+    if timeout_flag:
+        inferdt_synthesis_time = "TO"
+    else:
+        inferdt_synthesis_time = stop-start
+    
 
     ## OPTIMAL DEPTH
     print("Executing InferDT depth ...")
+    timeout_flag = False
     start = timeit.default_timer()
-    inferdt_depth_tree = run(f"./synthesizer/InferDT/InferDT {samples_file} -d -v -x infer", stdout=PIPE, stderr=STDOUT, universal_newlines=True, shell=True, timeout=300)
-    inferdt_depth_depth, inferdt_depth_nodes, inferdt_depth_path = parse_inferdt(inferdt_depth_size_tree,f"{synthesis_benchmark_path}inferdt/dt_d.py")
-    inferdt_depth_synthesis_time = stop-start
-    print(inferdt_depth_depth,inferdt_depth_nodes)
+    try:
+        inferdt_depth_tree = run(f"./synthesizer/InferDT/InferDT {samples_file} -d -v -x infer", stdout=PIPE, stderr=STDOUT, universal_newlines=True, shell=True, timeout=30)
+        inferdt_depth_depth, inferdt_depth_nodes, inferdt_depth_path = parse_inferdt(inferdt_depth_tree,f"{synthesis_benchmark_path}inferdt/dt_d.py")
+        print(inferdt_depth_depth,inferdt_depth_nodes)
+    except:
+        print("InferDT Timeout")
+        timeout_flag = True
+        inferdt_depth_depth = "N/A"
+        inferdt_depth_nodes = "N/A"
+    stop = timeit.default_timer()
+    if timeout_flag:
+        inferdt_depth_synthesis_time = "TO"
+    else:
+        inferdt_depth_synthesis_time = stop-start
+    
 
 
     # USING BINOCT
@@ -173,29 +185,64 @@ def experiment(dd_size, delta, epsilon, dir_name,depth,num_eva):
 
         program.close()
         return nodes, out_file_path
-
+    binoct_depth = 10
+    if inferdt_depth_depth != "N/A":
+        binoct_depth = inferdt_depth_depth
     os.system(f"mkdir {synthesis_benchmark_path}binoct")
     # USES DEPTH FORM INFERDT DEPTH
     print("Executing BinOct with maxdepth from InferDT ...")
-    binoct_tree = run(f"python3 ./synthesizer/binoct/run_exp.py {samples_file} {inferdt_depth_depth}",stdout=PIPE, stderr=STDOUT, universal_newlines=True, shell=True, timeout=300)
-    print(binoct_tree.stdout)
-    binoct_nodes, binoct_path = parse_binoct(binoct_tree,f"{synthesis_benchmark_path}binoct/dt.py")
-    print("Number of nodes for binoct tree: ",binoct_nodes)
+    timeout_flag = False
+    start = timeit.default_timer()
+    try:
+        binoct_tree = run(f"python3 ./synthesizer/binoct/run_exp.py {samples_file} {binoct_depth}",stdout=PIPE, stderr=STDOUT, universal_newlines=True, shell=True, timeout=30)
+        binoct_nodes, binoct_path = parse_binoct(binoct_tree,f"{synthesis_benchmark_path}binoct/dt.py")
+        print("Number of nodes for binoct tree: ",binoct_nodes)
+    except:
+        print("BinOct Timeout")
+        timeout_flag = True
+        binoct_path = "N/A"
+    stop = timeit.default_timer()
+    if timeout_flag:
+        binoct_synthesis_time = "TO"
+    else:
+        binoct_synthesis_time = stop-start
+    
 
+    
+    # USING SKLEARN CART
+    print("Executing CART unbounded depth ...")
+    ## UNBOUNDED DEPTH 
+    start = timeit.default_timer()
+    cart_unbounded_tree = cart_tree_synthesizer.synthesize(samples_file,["0","1","2","3"], synthesis_benchmark_path,-1,"unbounded")
+    cart_unbounded_depth = cart_unbounded_tree.get_depth()
+    cart_unbounded_nodes = cart_unbounded_tree.get_n_leaves()
+    stop = timeit.default_timer()
+    cart_unbounded_synthesis_time = stop-start
 
+    ## BOUNDED DEPTH 
+    print("Executing CART bounded depth ...")
+    start = timeit.default_timer()
+    cart_depth_tree = cart_tree_synthesizer.synthesize(samples_file,["0","1","2","3"], synthesis_benchmark_path,binoct_depth,"depth")
+    cart_bounded_depth = cart_depth_tree.get_depth()
+    cart_bounded_nodes = cart_depth_tree.get_n_leaves()
+    stop = timeit.default_timer()
+    cart_depth_synthesis_time = stop-start
     ################################################################################################################
     #                                       SYNTHESIZE USING SYNPLICATE-CEGS                                       #
     ################################################################################################################
     
     # USING MMC
-    start = timeit.default_timer()
-    cegqs_mmc_program_path, cegqs_best_mmc  = cegqs.execute(synthesis_benchmark_path,mmc_synthesizer, delta, epsilon, 10, 5, 0.01, 5, "ttf", 10,"mmc")
-    stop = timeit.default_timer()
-    cegqs_mmc_synthesis_time = stop-start
+    if mmc_flag:
+        start = timeit.default_timer()
+        cegqs_mmc_program_path, cegqs_best_mmc  = cegqs.execute(synthesis_benchmark_path,mmc_synthesizer, delta, epsilon, 10, num_iter, 0.01, 15, "ttf", 15,"mmc")
+        stop = timeit.default_timer()
+        cegqs_mmc_synthesis_time = stop-start
+    else:
+        cegqs_best_mmc = "N/A"
 
     # USING MS
     start = timeit.default_timer()
-    cegqs_program_path, cegqs_best_ms  = cegqs.execute(synthesis_benchmark_path,ms_synthesizer, delta, epsilon, 10, 5, 0.01, 5, "ttf", 10,"ms")
+    cegqs_program_path, cegqs_best_ms  = cegqs.execute(synthesis_benchmark_path,ms_synthesizer, delta, epsilon, 10, num_iter, 0.01, 15, "ttf", 15,"ms")
     stop = timeit.default_timer()
     cegqs_synthesis_time = stop-start
 
@@ -206,44 +253,248 @@ def experiment(dd_size, delta, epsilon, dir_name,depth,num_eva):
     #                                                   EVALUATION                                                 #
     ################################################################################################################
 
+    # GLOBAL VARIBALES FOR AVERAGE STATISTICS
+    misclassification_erm_avg = 0 
+    misclassification_erm_min = 1
+    misclassification_erm_max = 0
+
+    misclassification_cegqs_avg = 0 
+    misclassification_cegqs_min = 1
+    misclassification_cegqs_max = 0
+
+    misclassification_erm_mmc_avg = 0 
+    misclassification_erm_mmc_min = 1
+    misclassification_erm_mmc_max = 0
+
+    misclassification_cegqs_mmc_avg = 0 
+    misclassification_cegqs_mmc_min = 1
+    misclassification_cegqs_mmc_max = 0
+    
+    misclassification_cart_unbounded_avg = 0 
+    misclassification_cart_unbounded_min = 1
+    misclassification_cart_unbounded_max = 0
+    misclassification_cart_bounded_avg = 0 
+    misclassification_cart_bounded_min = 1
+    misclassification_cart_bounded_max = 0
+
+    misclassification_inferdt_depth_size_avg = 0 
+    misclassification_inferdt_depth_size_min = 1
+    misclassification_inferdt_depth_size_max = 0
+    misclassification_inferdt_depth_avg = 0 
+    misclassification_inferdt_depth_min = 1
+    misclassification_inferdt_depth_max = 0
+
+    misclassification_binoct_avg = 0 
+    misclassification_binoct_min = 1
+    misclassification_binoct_max = 0
+
     # CREATE EVALUATION SETS 
+    for set_number in range(num_eva):
+        print("----------------------------")
+        print(f"Creating evaluation set {set_number} ...")
+        sampler = importlib.import_module(f".sampler",synthesis_benchmark_path.replace("/",".").rstrip('.'))
+        samples  = evaluator.get_samples(sampler, evaluator.compute_cochran(0.05, 0.01), synthesis_benchmark_path,f"evaluation_samples_{set_number}")
+        num_samples = len(samples)
+
+        # EVALUATE SYNPLICATE ERM
+        print("|--Evaluating erm program ...")
+        erm_ce_count = evaluator.evaluate_synplicate_dd(samples,erm_program_path)
+        rate = erm_ce_count/num_samples
+        print(rate)
+        if rate < misclassification_erm_min:
+            misclassification_erm_min = rate
+        if rate > misclassification_erm_max:
+            misclassification_erm_max = rate
+        misclassification_erm_avg = (misclassification_erm_avg*set_number + rate )/(set_number+1)
+
+        # EVALUATE SYNPLICATE ERM MMC
+        if mmc_flag:
+            print("|--Evaluating erm mmc program ...")
+            erm_mmc_ce_count = evaluator.evaluate_synplicate_dd(samples,erm_mmc_program_path)
+            rate = erm_mmc_ce_count/num_samples
+            print(rate)
+            if rate < misclassification_erm_mmc_min:
+                misclassification_erm_mmc_min = rate
+            if rate > misclassification_erm_mmc_max:
+                misclassification_erm_mmc_max = rate
+            misclassification_erm_mmc_avg = (misclassification_erm_mmc_avg*set_number + rate )/(set_number+1)
+
+
+        # EVALUATE SYNPLICATE CEGS
+        print("|--Evaluating cegs program ...")
+        cegqs_ce_count = evaluator.evaluate_synplicate_dd(samples,cegqs_program_path)
+        rate = cegqs_ce_count/num_samples
+        print(rate)
+        if rate < misclassification_cegqs_min:
+            misclassification_cegqs_min = rate
+        if rate > misclassification_cegqs_max:
+            misclassification_cegqs_max = rate
+        misclassification_cegqs_avg = (misclassification_cegqs_avg*set_number + rate )/(set_number+1)
+
+        # EVALUATE SYNPLICATE CEGS MMC
+        if mmc_flag:
+            print("|--Evaluating cegs mmc program ...")
+            cegqs_mmc_ce_count = evaluator.evaluate_synplicate_dd(samples,cegqs_mmc_program_path)
+            rate = cegqs_mmc_ce_count/num_samples
+            print(rate)
+            if rate < misclassification_cegqs_mmc_min:
+                misclassification_cegqs_mmc_min = rate
+            if rate > misclassification_cegqs_mmc_max:
+                misclassification_cegqs_mmc_max = rate
+            misclassification_cegqs_mmc_avg = (misclassification_cegqs_mmc_avg*set_number + rate )/(set_number+1)
+
+        # EVLUATE INFERDT DEPTH SIZE
+        if inferdt_depth_size_depth != "N/A":
+            print("|--Evaluating inferdt depth/size tree ...")
+            inferdt_depth_size_ce_count = evaluator.evaluate_inferdt_tree(samples,inferdt_depth_size_path)
+            rate = inferdt_depth_size_ce_count/num_samples
+            print(rate)
+            if rate < misclassification_inferdt_depth_size_min:
+                misclassification_inferdt_depth_size_min = rate
+            if rate > misclassification_inferdt_depth_size_max:
+                misclassification_inferdt_depth_size_max = rate
+            misclassification_inferdt_depth_size_avg = (misclassification_inferdt_depth_size_avg*set_number + rate)/(set_number+1)
+
+        # EVLUATE INFERDT DEPTH 
+        if inferdt_depth_depth !="N/A":
+            print("|--Evaluating inferdt depth tree ...")
+            inferdt_depth_ce_count = evaluator.evaluate_inferdt_tree(samples,inferdt_depth_path)
+            rate = inferdt_depth_ce_count/num_samples
+            print(rate)
+            if rate < misclassification_inferdt_depth_min:
+                misclassification_inferdt_depth_min = rate
+            if rate > misclassification_inferdt_depth_max:
+                misclassification_inferdt_depth_max = rate
+            misclassification_inferdt_depth_avg = (misclassification_inferdt_depth_avg*set_number + rate)/(set_number+1)
+
+        # EVLUATE BINOCT DEPTH 
+        if binoct_path != "N/A":
+            print("|--Evaluating binoct tree ...")
+            binoct_ce_count = evaluator.evaluate_inferdt_tree(samples,binoct_path)
+            rate = binoct_ce_count/num_samples
+            print(rate)
+            if rate < misclassification_binoct_min:
+                misclassification_binoct_min = rate
+            if rate > misclassification_binoct_max:
+                misclassification_binoct_max = rate
+            misclassification_binoct_avg = (misclassification_binoct_avg*set_number + rate)/(set_number+1)
+
+        # EVALUATE CART BOUNDED 
+        print("|--Evaluating cart bounded tree ...")
+        cart_depth_rate = cart_tree_synthesizer.evaluate(f"{synthesis_benchmark_path}samples/evaluation_samples_{set_number}.csv",cart_depth_tree)
+        rate = cart_depth_rate
+        print(rate)
+        if rate < misclassification_cart_bounded_min:
+            misclassification_cart_bounded_min = rate
+        if rate > misclassification_cart_bounded_max:
+            misclassification_cart_bounded_max = rate
+        misclassification_cart_bounded_avg = (misclassification_cart_bounded_avg*set_number + rate)/(set_number+1)
+
+        # EVALUATE CART UNBOUNDED 
+        print("|--Evaluating cart unbounded tree ...")
+        cart_unbounded_rate = cart_tree_synthesizer.evaluate(f"{synthesis_benchmark_path}samples/evaluation_samples_{set_number}.csv",cart_unbounded_tree)
+        rate = cart_unbounded_rate
+        print(rate)
+        if rate < misclassification_cart_unbounded_min:
+            misclassification_cart_unbounded_min = rate
+        if rate > misclassification_cart_unbounded_max:
+            misclassification_cart_unbounded_max = rate
+        misclassification_cart_unbounded_avg = (misclassification_cart_unbounded_avg*set_number + rate)/(set_number+1)
+
 
     
-    
+    # SUMMARY
+    print("****************************************************")
+    print("====================================================")
+    print("                         ERM                        ")
+    print("                       -------                      ")
+    print(f"DD size: {dd_size}")
+    print(f"MS avg rate: {misclassification_erm_avg}")
+    print(f"MS min rate: {misclassification_erm_min}")
+    print(f"MS max rate: {misclassification_erm_max}")
+    print(f"MS synthesis time: {erm_synthesis_time} sec")
+    print(f"MMC avg rate: {misclassification_erm_mmc_avg}")
+    print(f"MMC min rate: {misclassification_erm_mmc_min}")
+    print(f"MMC max rate: {misclassification_erm_mmc_max}")
+    print(f"MMC synthesis time: {erm_mmc_synthesis_time} sec")
+    print("====================================================")
+    print("\n")
+    print("====================================================")
+    print("                        CeGQS                       ")
+    print("                       -------                      ")
+    print(f"DD size: {dd_size}")
+    print(f"MS avg rate: {misclassification_cegqs_avg}")
+    print(f"MS min rate: {misclassification_cegqs_min}")
+    print(f"MS max rate: {misclassification_cegqs_max}")
+    print(f"MS Best Index: {cegqs_best_ms}")
+    print(f"MS synthesis time: {cegqs_synthesis_time} sec")
+    print(f"MMC avg rate: {misclassification_cegqs_mmc_avg}")
+    print(f"MMC min rate: {misclassification_cegqs_mmc_min}")
+    print(f"MMC max rate: {misclassification_cegqs_mmc_max}")
+    print(f"MmC Best Index: {cegqs_best_mmc}")
+    print(f"MMC synthesis time: {cegqs_mmc_synthesis_time} sec")
+    print("====================================================")
+    print("\n")
+    print("====================================================")
+    print("                       InferDT                      ")
+    print("                       -------                      ")
+    print(f"D/S tree size: {inferdt_depth_size_nodes}")
+    print(f"D/S tree depth: {inferdt_depth_size_depth}")
+    print(f"D/S avg rate: {misclassification_inferdt_depth_size_avg}")
+    print(f"D/S min rate: {misclassification_inferdt_depth_size_min}")
+    print(f"D/S max rate: {misclassification_inferdt_depth_size_max}")
+    print(f"D/S synthesis time: {inferdt_synthesis_time} sec")
+    print(f"D tree size: {inferdt_depth_nodes}")
+    print(f"D tree depth: {inferdt_depth_depth}")
+    print(f"D avg rate: {misclassification_inferdt_depth_avg}")
+    print(f"D min rate: {misclassification_inferdt_depth_min}")
+    print(f"D max rate: {misclassification_inferdt_depth_max}")
+    print(f"D synthesis time: {inferdt_depth_synthesis_time} sec")
+    print("====================================================")
+    print("\n")
+    print("====================================================")
+    print("                        BinOct                      ")
+    print("                       --------                     ")
+    print(f"Tree size: {binoct_nodes}")
+    print(f"D/S tree depth: {binoct_depth}")
+    print(f"D/S avg rate: {misclassification_binoct_avg}")
+    print(f"D/S min rate: {misclassification_binoct_min}")
+    print(f"D/S max rate: {misclassification_binoct_max}")
+    print(f"D/S synthesis time: {binoct_synthesis_time} sec")
+    print("====================================================")
+    print("\n")
+    print("====================================================")
+    print("                         Cart                       ")
+    print("                        ------                      ")
+    print(f"B tree size: {cart_bounded_nodes}")
+    print(f"B tree depth: {cart_bounded_depth}")
+    print(f"B avg rate: {misclassification_cart_bounded_avg}")
+    print(f"B min rate: {misclassification_cart_bounded_min}")
+    print(f"B max rate: {misclassification_cart_bounded_max}")
+    print(f"B synthesis time: {cart_depth_synthesis_time} sec")
+    print(f"U tree size: {cart_unbounded_nodes}")
+    print(f"U tree depth: {cart_unbounded_depth}")
+    print(f"U avg rate: {misclassification_cart_unbounded_avg}")
+    print(f"U min rate: {misclassification_cart_unbounded_min}")
+    print(f"U max rate: {misclassification_cart_unbounded_max}")
+    print(f"U synthesis time: {cart_unbounded_synthesis_time} sec")
+    print("====================================================")
+
+    print("****************************************************")
 
 
-    # print("----------------------------")
-    # print("Creating evaluation set...")
-    # sampler = importlib.import_module(f".sampler",synthesis_benchmark_path.replace("/",".").rstrip('.'))
-
-    # erm_rate, erm_mmc_rate, cegqs_rate, cegqs_mmc_rate  = cochran.just_evaluate(sampler,synthesis_benchmark_path,erm_program_path, erm_mmc_program_path, cegqs_program_path, cegqs_mmc_program_path,delta, epsilon, "dt_samples")
-
-    # dt_depth_rate = cart_tree_synthesizer.evaluate(f"{synthesis_benchmark_path}samples/dt_samples.csv",dt_depth)
-
-    # dt_unbounded_rate = cart_tree_synthesizer.evaluate(f"{synthesis_benchmark_path}samples/dt_samples.csv",dt_unbounded)
-    
-    
-    # print("****************************************************")
-    # print(f"ERM ms rate: {erm_rate}. Time: {erm_synthesis_time}. Size: {depth}")
-    # print(f"ERM mmc rate: {erm_mmc_rate}. Time: {erm_mmc_synthesis_time}. Size: {depth}")
-    # print(f"CeGQS rate: {cegqs_rate}. Time: {cegqs_synthesis_time}. Size {depth}. Best: {cegqs_best_ms}" )
-    # print(f"CeGQS mmc rate: {cegqs_mmc_rate}. Time: {cegqs_mmc_synthesis_time}. Size {depth}. Best: {cegqs_best_mmc}")
-    # print(f"dt depth rate: {dt_depth_rate}. Time: {dt_depth_synthesis_time}. Depth: {depth}. Size: {dt_depth.get_n_leaves()}")
-    # print(f"dt unbounded rate: {dt_unbounded_rate}. Time: {dt_unbounded_synthesis_time}. Depth: {dt_unbounded.get_depth()}. Size: {dt_unbounded.get_n_leaves()}")
-    # print("****************************************************")
 
 
 
 
 
-
-
-dd_size = 1
+dd_size = 3
 delta = 0.05
-epsilon = 0.05
+epsilon = 0.01
 benchmark_name = "la"
 synthesizer = ms_synthesizer
 dir_name = f"{benchmark_name}_{dd_size}_{delta}_{epsilon}"
 num_eva = 5
+num_iter = 5
 
-experiment(dd_size,delta,epsilon,dir_name,dd_size,num_eva)
+experiment(dd_size,delta,epsilon,dir_name,dd_size,num_iter,num_eva)

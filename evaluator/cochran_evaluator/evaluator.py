@@ -202,3 +202,77 @@ def just_evaluate(sampler,benchmark_path,erm_program_path,erm_mmc_program_path, 
     logger.dump_samples(eva_samples,benchmark_path,file_name)
 
     return  erm_misclassification_rate,  erm_mmc_misclassification_rate, cegqs_misclassification_rate, cegqs_mmc_misclassification_rate
+
+    
+def compute_cochran(delta, epsilon):
+    z_value = 0
+
+    if delta == 0.05:
+        z_value = 1.96
+    elif delta == 0.01:
+        z_value = 2.33
+    else:
+        raise ValueError(f"z-value for delta {delta} unknown")
+
+    # Compute number of samples using Cochran's formula 
+    num_of_samples = math.ceil((z_value**2)*0.25/(epsilon**2))
+
+    return num_of_samples
+
+
+def get_samples(sampler,num_of_samples,output_path,file_name):
+        
+    samples = {}
+    for i in tqdm.tqdm(range(num_of_samples)):
+    
+        # Retrieve samples 
+        s = sampler.uniform(1)
+        samples.update(s)
+
+    logger.dump_samples(samples,output_path,file_name)
+    
+    return samples
+
+def evaluate_synplicate_dd(samples, program_path):
+
+    ce_count = 0
+    # IMPORT PROGRAM
+    split_path = program_path.rsplit("/",1)
+    program_file_name = split_path[1][:-3]
+    program_file_dir = split_path[0]
+    program = importlib.import_module(f".{program_file_name}",program_file_dir.replace("/",".")) 
+
+    for key, value in tqdm.tqdm(samples.items()):
+        # Get inputs
+        inputs = []
+        for in_name, in_val in key:
+            inputs.append(in_val)
+        # Get outputs
+        outputs =  list(value)
+
+        if program.execute(inputs) != f"{outputs[0][0]}_{outputs[0][1]}": #  TODO this works only for classifiers
+            ce_count += 1
+
+    return ce_count
+
+def evaluate_inferdt_tree(samples, program_path):
+    
+    ce_count = 0
+    # IMPORT PROGRAM
+    split_path = program_path.rsplit("/",1)
+    program_file_name = split_path[1][:-3]
+    program_file_dir = split_path[0]
+    program = importlib.import_module(f".{program_file_name}",program_file_dir.replace("/",".")) 
+
+    for key, value in tqdm.tqdm(samples.items()):
+        # Get inputs
+        inputs = {}
+        for in_name, in_val in key:
+            inputs[in_name]=in_val
+        # Get outputs
+        outputs =  list(value)
+
+        if program.execute(inputs) != outputs[0][1]: #  TODO this works only for classifiers
+            ce_count += 1
+
+    return ce_count

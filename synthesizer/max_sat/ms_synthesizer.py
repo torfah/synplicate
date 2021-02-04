@@ -223,6 +223,7 @@ def initialize(benchmark_path):
 
     print("Extracting synthesis configuration... ") 
     config = configure(benchmark_path) 
+    print(config)
 
     num_of_feature_nodes = config[0]
     feature_partition = config[1]

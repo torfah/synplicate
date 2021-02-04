@@ -2,6 +2,8 @@
 import importlib
 import os
 from synthesizer.max_sharp_sat import encoder
+from subprocess import STDOUT, PIPE, run
+
 
 
 # global variables 
@@ -273,7 +275,9 @@ def synthesize(benchmark_path,samples,file_name):
     # maximum model counting 
     # print("Maximum model counting...")
     witness_path = output_path + f"{file_name}_witness.txt"
-    os.system(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
+    # os.system(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}")
+    run(f"python synthesizer/max_sharp_sat/maxcount.py --scalmc synthesizer/max_sharp_sat/scalmc {encoding_path} 1 > {witness_path}", stdout=PIPE, stderr=STDOUT, universal_newlines=True, shell=True, timeout=300)
+
 
     # translate witness to program: extract program from mmc witness
     # extract program signature 
