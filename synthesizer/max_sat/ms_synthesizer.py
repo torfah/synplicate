@@ -3,6 +3,7 @@ import os
 import pandas
 import sys
 #import csv
+from  synthesizer.max_sat import encoder, dd_encoder
 from  synthesizer.max_sat import smallencoder
 from pysat.examples.rc2 import RC2
 #from pysat.examples.fm import FM
@@ -14,6 +15,7 @@ feature_partition = {}
 label_partition = {}
 feature_defs = {}
 output_path = ""
+weights_map = {}
 
 
 ## Copied from ../max_sharp_sat/mmc_synthesizer.py 
@@ -252,9 +254,9 @@ def compute_class_size():
     return size
 
 
-def synthesize(benchmark_path,samples,file_name):
+def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_name):
 
-    global num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path
+    global num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path, weights_map
     
     # create max#sat encoding
     encoding_file_name = f"{file_name}"
@@ -265,7 +267,8 @@ def synthesize(benchmark_path,samples,file_name):
     # label_partition = config[2] 
     # feature_defs = config[3]
 
-    encoding_path, pi_vars = smallencoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,encoding_file_name)
+    encoding_path = encoder.encode(dd_encoder,output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,lower_bound,upper_bound,precision,weights_map,encoding_file_name)
+    # encoding_path, pi_vars= smallencoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,encoding_file_name)
     #encoding_path = "" # TODO call encoder. use output path as directory to store encoding 
     
     #print (pi_vars)
@@ -285,7 +288,7 @@ def synthesize(benchmark_path,samples,file_name):
     pfound = True
     with RC2(wcnf) as rc2:
         x =  rc2.compute()
-    #    print (x)
+        # print (x)
         cost = rc2.cost
         print(f"Cost:{cost}")
         try:

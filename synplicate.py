@@ -1,4 +1,3 @@
-import tensorflow as tf
 import importlib
 import timeit
 import os
@@ -26,7 +25,7 @@ parser = argparse.ArgumentParser(description='synplicate', usage='%(prog)s [-h] 
 parser.add_argument('modelDirPath', help='path to model directory', metavar='model_path')
 parser.add_argument('--initNumSamples', help='number of initial samples', type=int, default=10)
 parser.add_argument('--method', help='synthesis procedure: erm, cegqs', default="erm", choices=["erm","cegqs"])
-parser.add_argument('--synthesizer', help='synthesis algorithm: mmc, ms, omt', default="mmc", choices=["mmc","ms","omt"])
+parser.add_argument('--synthesizer', help='synthesis algorithm: mmc, ms, omt', default="ms", choices=["mmc","ms","omt"])
 parser.add_argument('--radius', help='neighborhood radius for neighborhood sampling', type=int, default=1)
 parser.add_argument('--sampleRate', help='refinement sample rate', type=int, default=5)
 parser.add_argument('--robustness', help='distance between last two interpretations', type=float, default=0.01)
@@ -73,7 +72,7 @@ if synthesizer == "omt":
 # Execute based on method
 if method == "erm":
     # call erm procedure with synthesis algorithm and necessary parameters
-    erm.execute(synthesis_benchmark_path,synthesizer,confidence,error_margin)
+    erm.execute(synthesis_benchmark_path,synthesizer,confidence,error_margin,"ms")
 
 if method == "cegqs":
     # call cegqs procedure with synthesis algorithm and necessary parameters 

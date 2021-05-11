@@ -36,12 +36,12 @@ def phi_Gamma_val(sat_file,samples):
             if label[0] not in val_var_map.keys():
                 val_var_map[label[0]] = []
             temp_string = f"{label[0]}_{create_val_string(label[1])}"
-#           sat_file.write(f" & {temp_string}")
+        #   sat_file.write(f" & {temp_string}")
             if temp_string not in val_var_map[label[0]]:
                 val_var_map[label[0]].append(temp_string)
-#        sat_file.write(")")
+    #    sat_file.write(")")
 
-#    sat_file.write(";\n")
+    #sat_file.write(";\n")
     return val_var_map
 
 #def phi_Gamma_det(sat_file,samples,val_var_map):
@@ -69,9 +69,9 @@ def phi_Gamma(sat_file,samples):
     
     val_var_map = phi_Gamma_val(sat_file,samples) 
     sat_file.write("\n")
-#    phi_Gamma_det(sat_file,samples,val_var_map)
+    #    phi_Gamma_det(sat_file,samples,val_var_map)
     sat_file.write("\n")
-#    sat_file.write("phi_Gamma :=  phi_Gamma_val & phi_Gamma_det;\n")
+    #      sat_file.write("phi_Gamma :=  phi_Gamma_val & phi_Gamma_det;\n")
    
 # assign feature nodes to unique features
 def phi_T_feature_det(sat_file,num_of_feature_nodes,feature_partition):
@@ -200,7 +200,7 @@ def phi_sim_leaves(sat_file,label_partition,samples,feature_defs):
                 sat_file.write(" &\n")
                 sat_file.write(f"(alp_{label_name}_{bucket:d}_{count} == ")
                 sat_file.write("(F")
-#                for outputs in o:
+            #    for outputs in o:
                 output_bucket = feature_defs[label_name](outputs)
                 if output_bucket==bucket:
                     sat_file.write(" | ")
@@ -305,15 +305,15 @@ def write_all_clauses(dimacs_file, dimacs_tempfile_path, pi_vars):
                 dimacs_file.write(f"1 {first_var} {second_var}\n") 
             else:
                 dimacs_file.write(f"{hard_limit} {line}")
-#    for s in pi_vars:
-#        dimacs_file.write(f"1 {s} 0\n")
+    #for s in pi_vars:
+        #dimacs_file.write(f"1 {s} 0\n")
     text_file.close()    
     
 def extract_pi_max_variables(dimacs):
     print("|---Extracting alpha (pi)  variables...")  
     pi_vars = []
-#    tau_vars = []
-#    lam_vars = []
+    #tau_vars = []
+    #lam_vars = []
     text_file = open(dimacs)
 
     for line in text_file.readlines():
@@ -335,18 +335,18 @@ def extract_pi_max_variables(dimacs):
                     flag = True
         
         if current_num!="":
-#           if ("pi" in line):
+        #   if ("pi" in line):
             pi_vars.append(current_num)
-#            if("tau" in line):
-#                tau_vars.append(current_num)
-#            if ("lam" in line):
-#                lam_vars.append(current_num)
+        #    if("tau" in line):
+            #    tau_vars.append(current_num)
+        #    if ("lam" in line):
+            #    lam_vars.append(current_num)
 
     # print(f"   {len(pi_vars)} pi variables")
-#    print(f"   {len(tau_vars)} tau variables")
-#    print(f"   {len(lam_vars)} lam variables")
+    # print(f"   {len(tau_vars)} tau variables")
+    # print(f"   {len(lam_vars)} lam variables")
     text_file.close()    
-#    return pi_vars, tau_vars, lam_vars
+    #return pi_vars, tau_vars, lam_vars
     return pi_vars #, tau_vars, lam_vars
 
 def extract_ind_variables(dimacs,name_list): 
@@ -393,11 +393,7 @@ def encode(output_path,samples,num_of_feature_nodes,feature_partition,label_part
     sat_file = open(sat_file_path,"w")
     sat_file.write("BC1.1\n")
 
-    # phi_Gamma 
-    phi_Gamma(sat_file,samples)
-    sat_file.write("\n")
-
-    # phi_T
+    # phi_E
     phi_T(sat_file,num_of_feature_nodes,feature_partition,label_partition)
     sat_file.write("\n")
     
