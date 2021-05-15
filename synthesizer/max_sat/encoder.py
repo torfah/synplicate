@@ -2,44 +2,15 @@ import os
 
 
 
-def extract_soft_variables(dimacs):
-    print("|---Extracting soft variables...")  
-    soft_vars = []
-    text_file = open(dimacs)
-
-    for line in text_file.readlines():
-        if not line.startswith("c"):
-            break
-        
-        current_num = ""
-        if ("match_0" in line or " lam_" in line or "used_node_" in line):
-            flag = False
-            for letter in line:
-                if letter=='\n':
-                    break
-                if flag:
-                    if letter.isdigit():
-                        current_num += letter
-                if letter == '>':
-                    flag = True
-        
-        if current_num!="":
-            if "used_node_" in line:
-                if(("-",current_num,1) not in soft_vars):
-                    soft_vars.append(("-",current_num,1))
-            else:
-                if (("",current_num,1) not in soft_vars):
-                    soft_vars.append(("",current_num,1))
-
-    text_file.close()    
-    return soft_vars
-
 def dimacs_to_wcnf(wcnf_file, dimacs_path, soft_vars):
     print("|---Writing WCNF File...")  
     text_file = open(dimacs_path)
 
     # print(pi_vars)
-    hard_limit = len(soft_vars) + 1
+    hard_limit = 1
+    for num, weight in soft_vars:
+        hard_limit += int(weight)
+
     for line in text_file.readlines():
         if  line.startswith("c"):
             wcnf_file.write(line)
@@ -56,8 +27,8 @@ def dimacs_to_wcnf(wcnf_file, dimacs_path, soft_vars):
             wcnf_file.write(str(numClauses+ len(soft_vars))) 
             wcnf_file.write(f" {hard_limit}  \n")  #limit for hard clauses
             # add soft clauses
-            for sign,var,weight in soft_vars:
-                wcnf_file.write(f"{weight} {sign}{var} {0}\n")
+            for var,weight in soft_vars:
+                wcnf_file.write(f"{weight} {var} {0}\n")
         else: 
             # words = line.split()
             # first_var = words[0]
@@ -73,7 +44,7 @@ def dimacs_to_wcnf(wcnf_file, dimacs_path, soft_vars):
 
 
 
-def encode(encoder, output_dir_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,lower_bound, upper_bound, precision, weights_map, file_name):
+def encode(encoder, output_dir_path,samples,num_of_feature_nodes,feature_partition,feature_weights,label_partition,feature_defs,lower_bound, upper_bound, precision, weights_map, file_name):
 
     # create max#sat file
     os.system(f"mkdir -p {output_dir_path}")
@@ -98,11 +69,7 @@ def encode(encoder, output_dir_path,samples,num_of_feature_nodes,feature_partiti
     sat_file.write("\n")   
 
     # phi_region
-    for node in range(num_of_feature_nodes):
-        weights_map[f"used_node_{node:d}"]= 1
-        for feature, bucket in feature_partition.items():
-            weights_map[f"lam_{node:d}_{feature}"] = 1
-    encoder.phi_region(sat_file,num_of_feature_nodes,feature_partition,lower_bound,upper_bound,weights_map,precision)
+    encoder.phi_region(sat_file,num_of_feature_nodes,feature_partition,feature_weights,lower_bound,upper_bound,precision)
 
 
     sat_file.write("FORMULA :=  phi_E & phi_sim & phi_corr & phi_expl & phi_region;\n")
@@ -121,10 +88,10 @@ def encode(encoder, output_dir_path,samples,num_of_feature_nodes,feature_partiti
 
     print("Translating to wcnfdimacs...")
     wcnf_path = output_dir_path+file_name+".wcnf"
-    soft_vars = extract_soft_variables(dimacs_path)
+    soft_vars, corr_soft_vars, expl_soft_vars = encoder.extract_soft_variables(dimacs_path,feature_weights,num_of_feature_nodes)#TODO extract should only take dimacs path. Every other info should be in encoder
     wcnf_file = open(wcnf_path,"w")
     dimacs_to_wcnf(wcnf_file, dimacs_path, soft_vars)
     wcnf_file.close()
 
-    return wcnf_path
+    return wcnf_path, corr_soft_vars, expl_soft_vars
 

@@ -44,7 +44,7 @@ def writeConfig(dd_size, benchmark_path, features, fcount):
             cf.write(", ")
         index+=1
     cf.write("\n")
-    cf.write("labels = approved:2\n")
+    cf.write("labels = Class:4\n")
     cf.write("extend = false \n")
     cf.write ("feature_defs = feature_defs\n")
     cf.close()
@@ -148,7 +148,7 @@ def genTestData(delta, epsilon, benchmark_path):
 
 def experiment(dd_size, delta, epsilon, dir_name,depth, class_size, features, labels):
 
-    synthesis_benchmark_path = f"experiments/loan_acquisition/"
+    synthesis_benchmark_path = f"experiments/ICML/california_census/"
     print (synthesis_benchmark_path)
     test = synthesis_benchmark_path.replace("/",".").rstrip('.')
     print (test)
@@ -260,7 +260,7 @@ benchmark_name = "la"
 class_size=100
 synthesizer = ms_synthesizer
 dir_name = f"{benchmark_name}_{dd_size}_{delta}_{epsilon}"
-features= [ "age", "monthly_income","dependents", "credit_score"]
-labels =["approved"]
+features= ["population","median_income",'latitude',"longitude"]
+labels =["Class"]
 
 experiment(dd_size,delta,epsilon,dir_name,dd_size, class_size, features, labels)

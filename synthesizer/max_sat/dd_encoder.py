@@ -1,4 +1,4 @@
-
+import math
 
 
 # Encoding decision diagrams
@@ -242,10 +242,36 @@ def phi_expl(sat_file,num_of_feature_nodes,feature_partition,label_partition):
                 sat_file.write(")")
         sat_file.write(")")
         sat_file.write(")")
+
+    for node in range(num_of_feature_nodes):
+        for feature, bucket in feature_partition.items():
+            sat_file.write(" & (")
+            sat_file.write(f" lamp_{node:d}_{feature} == (used_node_{node:d} & lam_{node:d}_{feature})")
+            sat_file.write(")")
+     
     sat_file.write(";\n\n")
 
+def compute_normalizied_weights(feature_weights,num_of_feature_nodes):
+    weights_map = {}
+    for node in range(num_of_feature_nodes):
+        for feature_name, feature_weight in feature_weights.items():
+            weights_map[f"lamp_{node}_{feature_name}"] = feature_weight
+    maximum_feature_weight = max(feature_weights.values())
+    
+    for node in range(num_of_feature_nodes):
+        weights_map[f"used_node_{node:d}"] = maximum_feature_weight+1     
 
-def phi_region(sat_file,num_of_feature_nodes,feature_parition,lower_bound,upper_bound, weights_map, precision):
+
+    weight_sum = sum(weights_map.values())
+    for key in weights_map.keys():
+        weights_map[key] = int(weights_map[key]/14*100) # TODO implement method to compute max expl: solve maxsat for on phi_expl with its soft clauses 
+
+    return weights_map
+
+
+def phi_region(sat_file,num_of_feature_nodes,feature_partition,feature_weights,lower_bound,upper_bound, precision):
+
+    weights_map = compute_normalizied_weights(feature_weights,num_of_feature_nodes)
 
     def enc_in_binary(weight,var_name,precision):
         enc ="T"
@@ -272,7 +298,7 @@ def phi_region(sat_file,num_of_feature_nodes,feature_parition,lower_bound,upper_
 
         return enc
         
-    def phi_exp_weights(sat_file,num_of_feature_nodes,feature_parition,weights_map,precision):
+    def phi_exp_weights(sat_file,num_of_feature_nodes,feature_partition,weights_map,precision):
         sat_file.write("phi_exp_weights := T \n")
         for node in range(num_of_feature_nodes):
             sat_file.write("& (")
@@ -293,11 +319,11 @@ def phi_region(sat_file,num_of_feature_nodes,feature_parition,lower_bound,upper_
                 sat_file.write(f"!b_{node:d}_used_{bit}")
             sat_file.write(")")
             sat_file.write(")")
-            for feature, bucket in feature_parition.items():
+            for feature, bucket in feature_partition.items():
                 sat_file.write("& \n  (")
-                sat_file.write(f"used_node_{node:d} & lam_{node:d}_{feature} => ")
+                sat_file.write(f"lamp_{node:d}_{feature} => ")
                 sat_file.write("(")
-                temp = enc_in_binary(weights_map[f"lam_{node:d}_{feature}"], f"b_{node:d}_lam", precision)
+                temp = enc_in_binary(weights_map[f"lamp_{node:d}_{feature}"], f"b_{node:d}_lam", precision)
                 sat_file.write(temp)
                 sat_file.write(")")
                 sat_file.write(")")
@@ -354,15 +380,66 @@ def phi_region(sat_file,num_of_feature_nodes,feature_parition,lower_bound,upper_
     
     # Encode weights of syntactic structures
     if lower_bound>0 or upper_bound<100:
-        phi_exp_weights(sat_file,num_of_feature_nodes,feature_parition,weights_map,precision)
+        phi_exp_weights(sat_file,num_of_feature_nodes,feature_partition,weights_map,precision)
         # Encode adder for summing up weights
         phi_adder(sat_file,num_of_feature_nodes,precision)
     # Encode comparison to thresholds
         phi_threshold(sat_file,lower_bound,upper_bound,precision)
 
-    sat_file.write("phi_region := phi_exp_weights & phi_adder & phi_threshold;\n\n ")
+        sat_file.write("phi_region := phi_exp_weights & phi_adder & phi_threshold;\n\n ")
+    else:
+        sat_file.write("phi_region := T;")
 
 
+
+def extract_soft_variables(dimacs,feature_weights,num_of_feature_nodes):
+    print("|---Extracting soft variables...")  
+    soft_vars = []
+    expl_soft_vars = []
+    corr_soft_vars = []
+    text_file = open(dimacs)
+
+    weights_map = compute_normalizied_weights(feature_weights,num_of_feature_nodes)
+
+    for line in text_file.readlines():
+        if not line.startswith("c"):
+            break
+        
+        current_num = ""
+        current_var = ""
+        if ("match_0" in line or " lamp_" in line or "used_node_" in line):
+            words = line.split()
+            current_var = words[1]
+            current_num = words[3]
+
+            if current_var in weights_map.keys():
+                if "used_node_" in current_var:
+                    if((f"-{current_num}",weights_map[current_var]) not in soft_vars):
+                        soft_vars.append((f"-{current_num}",weights_map[current_var]))
+                        expl_soft_vars.append((f"-{current_num}",weights_map[current_var]))
+                if "lamp_" in current_var:
+                    if((current_num,weights_map[current_var]) not in soft_vars):
+                        soft_vars.append((current_num,weights_map[current_var]))
+                        expl_soft_vars.append((current_num,weights_map[current_var]))             
+            else:
+                if((current_num,1) not in soft_vars):
+                        soft_vars.append((current_num,1))
+                        corr_soft_vars.append((current_num,1))
+
+
+            # reached_num = False
+            # finished_var = False
+            # for letter in line:
+            #     if letter=='\n':
+            #         break
+            #     if reached_num:
+            #         if letter.isdigit():
+            #             current_num += letter
+            #     if letter == '>':
+            #         reached_num = True
+        
+    text_file.close()
+    return soft_vars, corr_soft_vars, expl_soft_vars
 # def phi_soft(sat_file, samples, num_of_feature_nodes,feature_partition):
 #     sat_file.write("phi_soft := ")
 #     phi_corr(sat_file,samples)

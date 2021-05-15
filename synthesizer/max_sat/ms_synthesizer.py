@@ -12,6 +12,7 @@ from pysat.formula import WCNF
 # global variables 
 num_of_feature_nodes = 0
 feature_partition = {}
+feature_weights ={}
 label_partition = {}
 feature_defs = {}
 output_path = ""
@@ -20,10 +21,11 @@ weights_map = {}
 
 ## Copied from ../max_sharp_sat/mmc_synthesizer.py 
 def configure(path):
-    config_file = open(f"{path}config.mmc","r")
+    config_file = open(f"{path}dd.config","r")
     # initialize 
     size = 0
     feature_partition = {}
+    feature_weights = {}
     label_partition = {}
     extend = False
     feature_defs = {}
@@ -35,8 +37,11 @@ def configure(path):
         elif word_list[0]=="features":
             for feature in word_list[2:]:
                 name = feature.split(':')[0] 
-                num_of_partitions = feature.split(':')[1].split(',')[0] 
+                num_of_partitions = feature.split(':')[1]
+                weight = feature.split(':')[2].split(',')[0]
+                # print(f"{name} -- {num_of_partitions} -- {weight}")
                 feature_partition[name] = int(num_of_partitions)
+                feature_weights[name] = int(weight)
         elif word_list[0]=="labels":
             for label in word_list[2:]:
                 name = label.split(':')[0] 
@@ -52,8 +57,9 @@ def configure(path):
         else:
             raise Exception("Config file syntax error!")
         # print(word_list[0])
+   
 
-    return (size,feature_partition,label_partition,feature_defs,extend)
+    return (size,feature_partition,feature_weights,label_partition,feature_defs,extend)
 
 def synthesize_python_code(target_path,program_edges,program_nodes,input_names,file_name):
     python_file_dir_path = target_path+ f"program/"
@@ -154,7 +160,7 @@ def extract_program_map(encoding_path, model):
                     dest += "_"+ att
                 program_edges[(source,partition)] = dest
                 print(f"({source},{partition}) -> {dest}")
-        if line.startswith("c lam"):
+        if line.startswith("c lamp"):
             words = line.split()
             # retrieve var name 
             name = words[1]
@@ -219,9 +225,9 @@ def extract_program(encoding_path,model,target_path,input_names,file_name):
     return python_file_path,dot_file_path,png_path
 
 
-def initialize(benchmark_path):
+def initialize(benchmark_path):#TODO move to specialized encoder
     
-    global num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path
+    global num_of_feature_nodes, feature_partition, feature_weights, label_partition, feature_defs, output_path
 
     print("Extracting synthesis configuration... ") 
     config = configure(benchmark_path) 
@@ -229,8 +235,9 @@ def initialize(benchmark_path):
 
     num_of_feature_nodes = config[0]
     feature_partition = config[1]
-    label_partition = config[2] 
-    feature_defs = config[3]
+    feature_weights = config[2]
+    label_partition = config[3] 
+    feature_defs = config[4]
 
     output_path = benchmark_path+"maxsat_encoding/"
 
@@ -256,7 +263,7 @@ def compute_class_size():
 
 def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_name):
 
-    global num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path, weights_map
+    global num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path, feature_weights
     
     # create max#sat encoding
     encoding_file_name = f"{file_name}"
@@ -267,7 +274,7 @@ def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_n
     # label_partition = config[2] 
     # feature_defs = config[3]
 
-    encoding_path = encoder.encode(dd_encoder,output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,lower_bound,upper_bound,precision,weights_map,encoding_file_name)
+    encoding_path, corr_soft_vars, expl_soft_vars = encoder.encode(dd_encoder,output_path,samples,num_of_feature_nodes,feature_partition,feature_weights,label_partition,feature_defs,lower_bound,upper_bound,precision,weights_map,encoding_file_name)
     # encoding_path, pi_vars= smallencoder.encode(output_path,samples,num_of_feature_nodes,feature_partition,label_partition,feature_defs,encoding_file_name)
     #encoding_path = "" # TODO call encoder. use output path as directory to store encoding 
     
@@ -290,25 +297,33 @@ def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_n
         x =  rc2.compute()
         # print (x)
         cost = rc2.cost
+        corr_cost = 0
+        expl_reward = 0
         print(f"Cost:{cost}")
         try:
             model = rc2.model
             s1=str(model)
             #print(s1)
             witness_file.write(s1)
+            for v in model:
+                for num, weight in corr_soft_vars:
+                    if str(v)==num:
+                        corr_cost += weight 
+                for num, weight in expl_soft_vars:
+                    if str(v)==num:
+                        expl_reward += weight
+                        print(num) 
         except:
             print("No program found. Instance is Unsatisfiable ")
             pfound = False
+            # exit(1)
 
     witness_file.close()
 
     program_path = ""
     dot_path = ""
     if not pfound:
-        return program_path, dot_path, 0
-##TODO: Create a dot file from the tau and lam variables
-
-    # TODO safe program into witness file 
+        return program_path, dot_path, 0, 0
 
     # translate witness to program: extract program from maxsat witness
     # extract program signature 
@@ -322,11 +337,12 @@ def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_n
     # TODO extract program from witness
 
     print(input_names)
-    sat_samples=len(samples) - cost
+    sat_samples=len(samples) - corr_cost
+    explainability = (expl_reward)/100
     print(f"SatSamples :{sat_samples}")
     program_path, dot_path, png_path = extract_program(encoding_path,model,benchmark_path,input_names,file_name)
 
-    return program_path, dot_path, sat_samples
+    return program_path, dot_path, sat_samples/len(samples), explainability
  
 # samples={}
 # #sample_file = '/home/shetal/Synthesis-Interpretable-Programs-for-DNNs/Experiments/loan_acquisition/age_bias_guided/Bench1/run1/samples/newsamples_0.csv'

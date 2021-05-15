@@ -32,7 +32,7 @@ parser.add_argument('--robustness', help='distance between last two interpretati
 parser.add_argument('--stability', help='number of iteration to determine stability', type=int,default=10)
 parser.add_argument('--steps', help='number of refinement steps', type=int, default=5)
 parser.add_argument('--confidence', help='delta value', type=float, default=0.05)
-parser.add_argument('--error_margin', help='epsilon', type=float, default=0.05)
+parser.add_argument('--error_margin', help='epsilon', type=float, default=0.01)
 parser.add_argument('--threshold', help='termination threshold', type=float, default=0.05)
 parser.add_argument('--termination', help='termination condition for CeGQS procedure: threshold, steps, stability', default="ttf", choices=["ttt","ttf","tft","fft","tff","ftf","fft"])
 parser.add_argument('--refinement_size', help='refinement size', type=int, default=10)
@@ -72,7 +72,8 @@ if synthesizer == "omt":
 # Execute based on method
 if method == "erm":
     # call erm procedure with synthesis algorithm and necessary parameters
-    erm.execute(synthesis_benchmark_path,synthesizer,confidence,error_margin,"ms")
+    samples, Gamma = erm.execute(synthesis_benchmark_path,synthesizer,confidence,error_margin,"ms")
+    print(f"Pareto-optimal solutions: \n {Gamma}")
 
 if method == "cegqs":
     # call cegqs procedure with synthesis algorithm and necessary parameters 
