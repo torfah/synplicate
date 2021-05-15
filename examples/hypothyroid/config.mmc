@@ -1,5 +1,0 @@
-size = 3
-features = age:4, TSH:4
-labels = Class:3
-extend = False
-feature_defs = feature_defs
