@@ -1,8 +1,0 @@
-digraph {
-node [label=approved_0,style=""] approved_0
-node [label=approved_0,style=""] approved_0
-node [label=dependents,shape="diamond",style=""] 0
-
-0 -> approved_0 [label="1"]
-0 -> approved_0 [label="0"]
-}
