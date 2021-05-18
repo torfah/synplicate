@@ -1,5 +1,7 @@
 import math
 
+expl_factor = 1
+corr_factor = 1
 
 # Encoding decision diagrams
 def phi_E(sat_file,num_of_feature_nodes,feature_partition,label_partition):
@@ -252,6 +254,9 @@ def phi_expl(sat_file,num_of_feature_nodes,feature_partition,label_partition):
     sat_file.write(";\n\n")
 
 def compute_normalizied_weights(feature_weights,num_of_feature_nodes):
+
+    global expl_factor
+    
     weights_map = {}
     for node in range(num_of_feature_nodes):
         for feature_name, feature_weight in feature_weights.items():
@@ -259,12 +264,12 @@ def compute_normalizied_weights(feature_weights,num_of_feature_nodes):
     maximum_feature_weight = max(feature_weights.values())
     
     for node in range(num_of_feature_nodes):
-        weights_map[f"used_node_{node:d}"] = maximum_feature_weight+1     
+        weights_map[f"used_node_{node:d}"] = (maximum_feature_weight+1)     
 
 
     weight_sum = sum(weights_map.values())
     for key in weights_map.keys():
-        weights_map[key] = int(weights_map[key]/14*100) # TODO implement method to compute max expl: solve maxsat for on phi_expl with its soft clauses 
+        weights_map[key] = int(weights_map[key]/24*100) # TODO implement method to compute max expl: solve maxsat for on phi_expl with its soft clauses 
 
     return weights_map
 
@@ -377,27 +382,46 @@ def phi_region(sat_file,num_of_feature_nodes,feature_partition,feature_weights,l
         sat_file.write(temp)
         sat_file.write(";\n\n")
 
-    
-    # Encode weights of syntactic structures
     if lower_bound>0 or upper_bound<100:
+        # Encode weights of syntactic structures
         phi_exp_weights(sat_file,num_of_feature_nodes,feature_partition,weights_map,precision)
         # Encode adder for summing up weights
         phi_adder(sat_file,num_of_feature_nodes,precision)
-    # Encode comparison to thresholds
         phi_threshold(sat_file,lower_bound,upper_bound,precision)
-
         sat_file.write("phi_region := phi_exp_weights & phi_adder & phi_threshold;\n\n ")
     else:
-        sat_file.write("phi_region := T;")
+        sat_file.write("phi_region := T;\n\n")
 
+def extract_threshold_vars(dimacs):
+    print("|---Extracting threshold variables...") 
 
+    threshold_vars = {}
+    text_file = open(dimacs)
+
+    for line in text_file.readlines():
+        if not line.startswith("c"):
+            break
+
+        current_num = ""
+        current_var = ""
+
+        if ("upper_" in line or "lower_" in line):
+            words = line.split()
+            current_var = words[1]
+            current_num = words[3]
+
+            threshold_vars[current_var]= current_num
+
+    return threshold_vars
 
 def extract_soft_variables(dimacs,feature_weights,num_of_feature_nodes):
     print("|---Extracting soft variables...")  
     soft_vars = []
     expl_soft_vars = []
     corr_soft_vars = []
+    corr_vars = []
     text_file = open(dimacs)
+    
 
     weights_map = compute_normalizied_weights(feature_weights,num_of_feature_nodes)
 
@@ -413,18 +437,21 @@ def extract_soft_variables(dimacs,feature_weights,num_of_feature_nodes):
             current_num = words[3]
 
             if current_var in weights_map.keys():
+                weight = int(weights_map[current_var]/corr_factor)
                 if "used_node_" in current_var:
-                    if((f"-{current_num}",weights_map[current_var]) not in soft_vars):
-                        soft_vars.append((f"-{current_num}",weights_map[current_var]))
-                        expl_soft_vars.append((f"-{current_num}",weights_map[current_var]))
+                    if((f"-{current_num}",weight) not in soft_vars):
+                        soft_vars.append((f"-{current_num}",weight))
+                        expl_soft_vars.append((f"-{current_num}",weight))
                 if "lamp_" in current_var:
-                    if((current_num,weights_map[current_var]) not in soft_vars):
-                        soft_vars.append((current_num,weights_map[current_var]))
-                        expl_soft_vars.append((current_num,weights_map[current_var]))             
+                    if((current_num,weight) not in soft_vars):
+                        soft_vars.append((current_num,weight))
+                        expl_soft_vars.append((current_num,weight))             
             else:
-                if((current_num,1) not in soft_vars):
-                        soft_vars.append((current_num,1))
-                        corr_soft_vars.append((current_num,1))
+                weight = 1
+                if((current_num,weight) not in soft_vars):
+                        soft_vars.append((current_num,weight))
+                        corr_soft_vars.append((current_num,weight))
+                corr_vars.append((current_num,weight))
 
 
             # reached_num = False
@@ -439,7 +466,7 @@ def extract_soft_variables(dimacs,feature_weights,num_of_feature_nodes):
             #         reached_num = True
         
     text_file.close()
-    return soft_vars, corr_soft_vars, expl_soft_vars
+    return soft_vars, corr_soft_vars, expl_soft_vars, corr_vars
 # def phi_soft(sat_file, samples, num_of_feature_nodes,feature_partition):
 #     sat_file.write("phi_soft := ")
 #     phi_corr(sat_file,samples)

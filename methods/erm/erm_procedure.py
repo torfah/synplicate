@@ -5,6 +5,7 @@ import os
 # utils
 from utils import logger
 import timeit
+from synthesizer.decision_trees import cart_tree_synthesizer
 
 
 
@@ -41,6 +42,17 @@ def execute(benchmark_path, synthesizer, delta, epsilon,name,samples={}):
 
     # dump input samples
     logger.dump_samples(samples,benchmark_path,f"erm_syn_samples")
+    samples_file = f"{benchmark_path}samples/erm_syn_samples.csv"
+
+    # USING SKLEARN CART
+    print("Executing CART unbounded depth ...")
+    ## UNBOUNDED DEPTH 
+    start = timeit.default_timer()
+    cart_unbounded_tree = cart_tree_synthesizer.synthesize(samples_file,["0","1","2","3"], benchmark_path,-1,"unbounded")
+    cart_unbounded_depth = cart_unbounded_tree.get_depth()
+    cart_unbounded_nodes = cart_unbounded_tree.get_n_leaves()
+    stop = timeit.default_timer()
+    cart_unbounded_synthesis_time = stop-start
 
     # initialize
     os.system(f"rm -r {benchmark_path}program")
@@ -64,7 +76,7 @@ def execute(benchmark_path, synthesizer, delta, epsilon,name,samples={}):
         print(f"Synthesis time:{synthesis_time}")
 
         if corr>0 and explainability>0:
-            print(f"Accuracy:{corr}")
+            print(f"Accuracy:{corr} ({int(corr* len(samples))}/{len(samples)})")
             print(f"Explainabilty: {explainability}")
 
             if corr> corr_bound:

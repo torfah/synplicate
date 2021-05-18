@@ -39,6 +39,7 @@ def dimacs_to_wcnf(wcnf_file, dimacs_path, soft_vars):
             wcnf_file.write(f"{hard_limit} {line}")
 
     text_file.close()    
+    return hard_limit
 
 
 
@@ -88,10 +89,11 @@ def encode(encoder, output_dir_path,samples,num_of_feature_nodes,feature_partiti
 
     print("Translating to wcnfdimacs...")
     wcnf_path = output_dir_path+file_name+".wcnf"
-    soft_vars, corr_soft_vars, expl_soft_vars = encoder.extract_soft_variables(dimacs_path,feature_weights,num_of_feature_nodes)#TODO extract should only take dimacs path. Every other info should be in encoder
+    soft_vars, corr_soft_vars, expl_soft_vars, corr_vars = encoder.extract_soft_variables(dimacs_path,feature_weights,num_of_feature_nodes)#TODO extract should only take dimacs path. Every other info should be in encoder
+    threshold_vars = encoder.extract_threshold_vars(dimacs_path)
     wcnf_file = open(wcnf_path,"w")
-    dimacs_to_wcnf(wcnf_file, dimacs_path, soft_vars)
+    hard_weight = dimacs_to_wcnf(wcnf_file, dimacs_path, soft_vars)
     wcnf_file.close()
 
-    return wcnf_path, corr_soft_vars, expl_soft_vars
+    return wcnf_path, corr_soft_vars, expl_soft_vars, corr_vars, threshold_vars, hard_weight
 
