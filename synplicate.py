@@ -5,7 +5,7 @@ import argparse
 
 #import procedures
 from methods.erm import erm_procedure as erm
-from methods.cegqs import cegqs_procedure as cegqs
+# from methods.cegqs import cegqs_procedure as cegqs
 
 # import synthesizers
 from synthesizer.max_sharp_sat import mmc_synthesizer
@@ -24,7 +24,7 @@ parser = argparse.ArgumentParser(description='synplicate', usage='%(prog)s [-h] 
 
 parser.add_argument('modelDirPath', help='path to model directory', metavar='model_path')
 parser.add_argument('--initNumSamples', help='number of initial samples', type=int, default=10)
-parser.add_argument('--method', help='synthesis procedure: erm, cegqs', default="erm", choices=["erm","cegqs"])
+parser.add_argument('--method', help='synthesis procedure: pac, cegqs', default="pac", choices=["pac","cegqs"])
 parser.add_argument('--synthesizer', help='synthesis algorithm: mmc, ms, omt', default="ms", choices=["mmc","ms","omt"])
 parser.add_argument('--radius', help='neighborhood radius for neighborhood sampling', type=int, default=1)
 parser.add_argument('--sampleRate', help='refinement sample rate', type=int, default=5)
@@ -32,7 +32,7 @@ parser.add_argument('--robustness', help='distance between last two interpretati
 parser.add_argument('--stability', help='number of iteration to determine stability', type=int,default=10)
 parser.add_argument('--steps', help='number of refinement steps', type=int, default=5)
 parser.add_argument('--confidence', help='delta value', type=float, default=0.05)
-parser.add_argument('--error_margin', help='epsilon', type=float, default=0.05)
+parser.add_argument('--error_margin', help='epsilon', type=float, default=0.03)
 parser.add_argument('--threshold', help='termination threshold', type=float, default=0.05)
 parser.add_argument('--termination', help='termination condition for CeGQS procedure: threshold, steps, stability', default="ttf", choices=["ttt","ttf","tft","fft","tff","ftf","fft"])
 parser.add_argument('--refinement_size', help='refinement size', type=int, default=10)
@@ -70,19 +70,19 @@ if synthesizer == "omt":
 
 
 # Execute based on method
-if method == "erm":
+if method == "pac":
     # call erm procedure with synthesis algorithm and necessary parameters
     samples, Gamma = erm.execute(synthesis_benchmark_path,synthesizer,confidence,error_margin,"ms")
     print(f"Pareto-optimal solutions: \n {Gamma}")
-    output = open(f"{synthesis_benchmark_path}results.txt","w")
+    output = open(f"{synthesis_benchmark_path}results.csv","w")
     for path, corr, expl in Gamma:
         output.write(f"{path}  ,   {corr}   ,   {expl}\n")
     output.close
 
 if method == "cegqs":
     # call cegqs procedure with synthesis algorithm and necessary parameters 
-    cegqs.execute(synthesis_benchmark_path,synthesizer,confidence,error_margin,init_num_of_samples, step_bound, termination_threshold, stability_factor, terminiation_condition,refinement_size)
-
+    # cegqs.execute(synthesis_benchmark_path,synthesizer,confidence,error_margin,init_num_of_samples, step_bound, termination_threshold, stability_factor, terminiation_condition,refinement_size)
+    print("Coming soon!")
 # =================================================================================================
 # =================================================================================================
 # =================================================================================================

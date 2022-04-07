@@ -269,7 +269,7 @@ def compute_normalizied_weights(feature_weights,num_of_feature_nodes):
 
     weight_sum = sum(weights_map.values())
     for key in weights_map.keys():
-        weights_map[key] = int(weights_map[key]/24*100) # TODO implement method to compute max expl: solve maxsat for on phi_expl with its soft clauses 
+        weights_map[key] = int(weights_map[key]/34*100) # TODO implement method to compute max expl: solve maxsat for on phi_expl with its soft clauses 
 
     return weights_map
 
@@ -363,23 +363,31 @@ def phi_region(sat_file,num_of_feature_nodes,feature_partition,feature_weights,l
         sat_file.write(")\n")
         sat_file.write(";\n\n")
 
-    def phi_threshold(sat_file,lower_bound,upper_bound,precision):
-        sat_file.write(f"phi_threshold := smaller_{precision-1} ")
-        for bit in range(1,precision):
-            sat_file.write(f"& (smaller_{bit} == ((!a_fin_{bit} & upper_{bit})| ( (a_fin_{bit} == upper_{bit}) & smaller_{bit-1})))")
-        sat_file.write(f"& (smaller_0 == (!a_fin_0 & upper_0))\n")
-        sat_file.write("&\n")
-        sat_file.write(f"larger_{precision-1}")
-        for bit in range(1,precision):
-            sat_file.write(f"& (larger_{bit} == ((a_fin_{bit} & !lower_{bit})| ((a_fin_{bit} == lower_{bit}) & larger_{bit-1})))")
-        sat_file.write(f"& (larger_0 == (a_fin_0 & !lower_0))\n")
+    def phi_threshold(sat_file,lower_bound,upper_bound,precision, lower, upper):
+        sat_file.write(f"phi_threshold := T ")
+        
+        if upper:
+            sat_file.write("&\n")
+            sat_file.write(f"smaller_{precision-1}")
+            for bit in range(1,precision):
+                sat_file.write(f"& (smaller_{bit} == ((!a_fin_{bit} & upper_{bit})| ( (a_fin_{bit} == upper_{bit}) & smaller_{bit-1})))")
+            sat_file.write(f"& (smaller_0 == (!a_fin_0 & upper_0))\n")
+       
+        if lower:
+            sat_file.write("&\n")
+            sat_file.write(f"larger_{precision-1}")
+            for bit in range(1,precision):
+                sat_file.write(f"& (larger_{bit} == ((a_fin_{bit} & !lower_{bit})| ((a_fin_{bit} == lower_{bit}) & larger_{bit-1})))")
+            sat_file.write(f"& (larger_0 == (a_fin_0 & !lower_0))\n")
 
-        sat_file.write("& \n")
-        temp = enc_in_binary(upper_bound, "upper", precision)
-        sat_file.write(temp)
-        sat_file.write("& \n")
-        temp = enc_in_binary(lower_bound, "lower", precision)
-        sat_file.write(temp)
+        if upper:
+            sat_file.write("& \n")
+            temp = enc_in_binary(upper_bound, "upper", precision)
+            sat_file.write(temp)
+        if lower:
+            sat_file.write("& \n")
+            temp = enc_in_binary(lower_bound, "lower", precision)
+            sat_file.write(temp)
         sat_file.write(";\n\n")
 
     if lower_bound>0 or upper_bound<100:
@@ -387,7 +395,7 @@ def phi_region(sat_file,num_of_feature_nodes,feature_partition,feature_weights,l
         phi_exp_weights(sat_file,num_of_feature_nodes,feature_partition,weights_map,precision)
         # Encode adder for summing up weights
         phi_adder(sat_file,num_of_feature_nodes,precision)
-        phi_threshold(sat_file,lower_bound,upper_bound,precision)
+        phi_threshold(sat_file,lower_bound,upper_bound,precision, lower_bound>0, upper_bound<100)
         sat_file.write("phi_region := phi_exp_weights & phi_adder & phi_threshold;\n\n ")
     else:
         sat_file.write("phi_region := T;\n\n")

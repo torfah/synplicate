@@ -5,9 +5,10 @@ import sys
 import copy
 
 #import csv
-from  synthesizer.max_sat import encoder, dd_encoder
-from  synthesizer.max_sat import smallencoder
-from pysat.examples.rc2 import RC2
+from synthesizer.max_sat import encoder, dd_encoder
+from synthesizer.max_sat import smallencoder
+# from pysat.examples.rc2 import RC2
+from pysat.examples.rc2 import RC2Stratified
 #from pysat.examples.fm import FM
 from pysat.formula import WCNF
 
@@ -25,6 +26,8 @@ corr_soft_vars =[]
 expl_soft_vars = []
 encoding_path = ""
 hard_weight = 0
+current_rc2 = ""
+threshold_weight = 0
 
 
 ## Copied from ../max_sharp_sat/mmc_synthesizer.py 
@@ -297,7 +300,7 @@ def get_binary(num,precision):
 
 def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_name):
 
-    global num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path, feature_weights, base_wcnf,corr_soft_vars, expl_soft_vars, threshold_vars, encoding_path, hard_weight
+    global current_rc2, threshold_weight, num_of_feature_nodes, feature_partition, label_partition, feature_defs, output_path, feature_weights, base_wcnf,corr_soft_vars, expl_soft_vars, threshold_vars, encoding_path, hard_weight
     
     # create max#sat encoding
     encoding_file_name = f"{file_name}"
@@ -307,34 +310,37 @@ def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_n
     if True:
         encoding_path, corr_soft_vars, expl_soft_vars, corr_vars, threshold_vars, hard_weight = encoder.encode(dd_encoder,output_path,samples,num_of_feature_nodes,feature_partition,feature_weights,label_partition,feature_defs,lower_bound,upper_bound,precision,weights_map,encoding_file_name)
         wcnf = WCNF(from_file=encoding_path)
-        current_wcnf = wcnf
+        current_rc2 = RC2Stratified(wcnf)
+        threshold_weight = hard_weight+1
     else: 
-        current_wcnf = copy.deepcopy(wcnf)
+        # current_wcnf = copy.deepcopy(wcnf)
         binary_lower = get_binary(lower_bound,precision)
         binary_upper = get_binary(upper_bound,precision)
-        # print(binary_lower, binary_upper)
-
-        for bit_num in range(len(binary_lower)):
-            if binary_lower[bit_num]:
-                current_wcnf.append([int(threshold_vars[f"lower_{bit_num}"])])
-                # temp = [int(threshold_vars[f"lower_{bit_num}"])]
-                # print(f"adding lower_{bit_num}, {temp}")
-            else:
-                current_wcnf.append([-int(threshold_vars[f"lower_{bit_num}"])])
-                # temp = [-int(threshold_vars[f"lower_{bit_num}"])]
-                # print(f"adding -lower_{bit_num}, {temp}")
-
-        for bit_num in range(len(binary_upper)):
-            if binary_upper[bit_num]:
-                current_wcnf.append([int(threshold_vars[f"upper_{bit_num}"])])
-                # temp = [int(threshold_vars[f"upper_{bit_num}"])]
-                # print(f"adding upper_{bit_num}, {temp}")
-            else:
-                current_wcnf.append([-int(threshold_vars[f"upper_{bit_num}"])])
-                # temp = [-int(threshold_vars[f"upper_{bit_num}"])]
-                # print(f"adding -upper_{bit_num}, {temp}")
-
         
+        print(f"New threshold weight: {threshold_weight}")
+
+        if lower_bound>0:
+            print(binary_lower)
+            for bit_num in range(len(binary_lower)):
+                if binary_lower[bit_num]:
+                    current_rc2.add_clause([int(threshold_vars[f"lower_{bit_num}"])], weight=threshold_weight)
+                else: 
+                    current_rc2.add_clause([-int(threshold_vars[f"lower_{bit_num}"])], weight=threshold_weight)
+            
+
+        if upper_bound<100:
+            print(binary_upper)
+            for bit_num in range(len(binary_upper)):
+                if binary_upper[bit_num]:
+                    current_rc2.add_clause([int(threshold_vars[f"upper_{bit_num}"])], weight=threshold_weight)
+                    # temp = [int(threshold_vars[f"upper_{bit_num}"])]
+                    # print(f"adding upper_{bit_num}, {temp}")
+                else:
+                    current_rc2.add_clause([-int(threshold_vars[f"upper_{bit_num}"])], weight=threshold_weight)
+                    # temp = [-int(threshold_vars[f"upper_{bit_num}"])]
+                    # print(f"adding -upper_{bit_num}, {temp}")
+
+        threshold_weight = threshold_weight*precision+1
 
     # maxsat 
     print("Max Sat...")
@@ -347,14 +353,14 @@ def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_n
     # print(threshold_vars)
     # print(f"Sloving for instance {current_wcnf}")
     # print(current_wcnf.hard)
-    rc2 = RC2(current_wcnf)
-    rc2.compute()
-    cost = rc2.cost
+    # current_rc2 = RC2(current_wcnf)
+    current_rc2.compute()
+    cost = current_rc2.cost
     print(f"Total cost:{cost}")
     corr_reward = 0
     expl_reward = 0
     try:
-        model = rc2.model
+        model = current_rc2.model
         s1=str(model)
         # print(s1)
         witness_file.write(s1)
@@ -396,7 +402,7 @@ def synthesize(benchmark_path,samples,lower_bound, upper_bound, precision,file_n
     print(f"SatSamples :{sat_samples}")
     program_path, dot_path, png_path = extract_program(encoding_path,model,benchmark_path,input_names,file_name)
     
-
+    current_rc2.delete()
     return program_path, dot_path, sat_samples/len(samples), explainability
  
 # samples={}
