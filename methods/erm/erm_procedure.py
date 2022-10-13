@@ -59,6 +59,7 @@ def execute(benchmark_path, synthesizer, delta, epsilon,name,samples={}):
     os.system(f"rm -r {benchmark_path}program")
     Gamma = []
     W = [(0,100,0)]
+    first = True
 
     while W != []:
         expl_lower_bound, expl_upper_bound, corr_bound = W.pop(0)
@@ -70,7 +71,9 @@ def execute(benchmark_path, synthesizer, delta, epsilon,name,samples={}):
         print("=================================")
         print(f" Exploring solution in region [{expl_lower_bound},{expl_upper_bound},{corr_bound}]")
         print("=================================")
-        program_path, dot_path, corr, explainability = synthesizer.synthesize(benchmark_path,samples,expl_lower_bound,expl_upper_bound,precision,f"{name}_{expl_lower_bound}_{expl_upper_bound}_{corr_bound}_erm")
+        program_path, dot_path, corr, explainability = synthesizer.synthesize(benchmark_path,samples,expl_lower_bound,expl_upper_bound,precision,f"{name}_{expl_lower_bound}_{expl_upper_bound}_{corr_bound}_erm", first)
+        first = False
+        
         print(f"Synthesized program: {program_path}\nVisualization: {dot_path}")
         stop = timeit.default_timer()
         synthesis_time = stop-start

@@ -10,6 +10,7 @@ from methods.erm import erm_procedure as erm
 # import synthesizers
 from synthesizer.max_sharp_sat import mmc_synthesizer
 from synthesizer.max_sat import ms_synthesizer
+from synthesizer.incr_max_sat import ims_synthesizer
 from synthesizer.omt import omt_synthesizer
 from evaluator.recall_evaluator import evaluator
 
@@ -67,6 +68,8 @@ if synthesizer == "ms":
     synthesizer = ms_synthesizer
 if synthesizer == "omt":
     synthesizer = omt_synthesizer
+if synthesizer == "ims":
+    synthesizer = ims_synthesizer
 
 
 # Execute based on method
